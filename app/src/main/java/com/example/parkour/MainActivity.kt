@@ -11,12 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
+import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.ObstaclesViewModel
+import com.example.parkour.viewModel.PerformanceObstaclesViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.CompetitionView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val competitionViewModel = ViewModelProvider(this)[CompetitionViewModel::class.java]
+        val competitionViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             ParkourTheme {

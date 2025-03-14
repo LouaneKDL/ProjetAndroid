@@ -3,25 +3,24 @@ package com.example.parkour.viewModel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-
-import com.example.parkour.api.RetrofitInstance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.parkour.model.Competition
+import com.example.parkour.api.RetrofitInstance
+import com.example.parkour.model.Courses
 import kotlinx.coroutines.launch
 
-class CompetitionViewModel : ViewModel(){
+class CoursesViewModel : ViewModel() {
 
     private val parkourApi = RetrofitInstance.parkourApi
 
-    private val _competitions = MutableLiveData<List<Competition>>()
-    val competitions: LiveData<List<Competition>> = _competitions
+    private val _courses = MutableLiveData<List<Courses>>()
+    val courses: LiveData<List<Courses>> = _courses
 
     fun getData(){
         viewModelScope.launch {
-            val response = parkourApi.getCompetitions()
+            val response = parkourApi.getCourses()
             if(response.isSuccessful){
-                _competitions.postValue(response.body())
+                _courses.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
             }
             else{
