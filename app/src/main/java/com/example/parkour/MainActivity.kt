@@ -1,5 +1,6 @@
 package com.example.parkour
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.views.CompetitionView
+import com.example.parkour.views.addCompetitionView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CompetitionView(competitionViewModel)
+                    addCompetitionView(Modifier)
                 }
             }
         }
