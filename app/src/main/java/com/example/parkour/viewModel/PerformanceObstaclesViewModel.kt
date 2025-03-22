@@ -29,4 +29,21 @@ class PerformanceObstaclesViewModel : ViewModel() {
             }
         }
     }
+
+
+    private val _performanceObstacle = MutableLiveData<Performance_obstacles>()
+    val performanceObstacle: LiveData<Performance_obstacles> = _performanceObstacle
+
+    fun getPerfomanceById(id:Int){
+        viewModelScope.launch{
+            val response = parkourApi.getPerformanceObstaclesById(id)
+            if(response.isSuccessful){
+                _performanceObstacle.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
 }

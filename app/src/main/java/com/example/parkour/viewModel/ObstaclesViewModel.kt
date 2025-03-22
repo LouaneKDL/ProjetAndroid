@@ -16,14 +16,28 @@ class ObstaclesViewModel : ViewModel() {
     private val _obstacles = MutableLiveData<List<Obstacles>>()
     val obstacles: LiveData<List<Obstacles>> = _obstacles
 
-    fun getData(){
+    fun getData() {
         viewModelScope.launch {
             val response = parkourApi.getObstacles()
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 _obstacles.postValue(response.body())
-                Log.i("Reponse :",response.body().toString())
+                Log.i("Reponse :", response.body().toString())
+            } else {
+                Log.i("Error :", response.message())
             }
-            else{
+        }
+    }
+
+    private val _obstacle = MutableLiveData<Obstacles>()
+    val obstacle: LiveData<Obstacles> = _obstacle
+
+    fun getObstacleById(id: Int) {
+        viewModelScope.launch {
+            val response = parkourApi.getObstacleById(id)
+            if (response.isSuccessful) {
+                _obstacle.postValue(response.body())
+                Log.i("Reponse :", response.body().toString())
+            } else {
                 Log.i("Error :", response.message())
             }
         }
