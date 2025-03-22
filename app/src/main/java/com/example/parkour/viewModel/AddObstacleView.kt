@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,12 +36,13 @@ import com.example.parkour.R
 fun AddObstacleView(modifier: Modifier) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            imageUri = it
-            Log.i("image", "Selected image URI: $it")
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                imageUri = it
+                Log.i("image", "Selected image URI: $it")
+            }
         }
-    }
 
     Column(
         modifier = modifier.fillMaxSize().background(Color.LightGray),
@@ -70,26 +72,32 @@ fun AddObstacleView(modifier: Modifier) {
                 modifier = Modifier.padding(end = 20.dp)
             )
         }
+        val configuration = LocalConfiguration.current
 
-        Row(
-            modifier = Modifier.padding(top = 30.dp)
-        ) {
-            Text(
-                text = "Photo",
-                modifier = modifier.padding(
-                    start = 60.dp,
-                    top = 30.dp,
-                    end = 30.dp,
-                    bottom = 30.dp
+
+            Row(
+                modifier = Modifier.padding(top = 30.dp)
+            ) {
+
+                Text(
+                    text = "Photo",
+                    modifier = modifier.padding(
+                        start = 60.dp,
+                        top = 30.dp,
+                        end = 30.dp,
+                        bottom = 30.dp
+                    )
                 )
-            )
 
-            Button(onClick = { launcher.launch("image/*") }) {
-                Text("Sélectionner une image")
+                Button(onClick = { launcher.launch("image/*") }) {
+                    Text("Sélectionner une image")
+
+
+                }
             }
 
             imageUri?.let { uri ->
-              //  Text("oui")
+                //  Text("oui")
 
                 val painter = rememberAsyncImagePainter(uri)
                 Image(
@@ -102,5 +110,7 @@ fun AddObstacleView(modifier: Modifier) {
                 )
             }
         }
-    }
+
+
+    
 }
