@@ -10,8 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import com.example.parkour.ui.theme.ParkourTheme
+import com.example.parkour.viewModel.AddObstacleView
 import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.views.CompetitionView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                 Surface(Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CompetitionView(competitionViewModel)
+                    AddObstacleView(Modifier)
                 }
             }
         }

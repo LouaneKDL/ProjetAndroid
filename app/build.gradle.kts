@@ -58,5 +58,5 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
+    implementation("io.coil-kt:coil-compose:2.0.0")
 }
