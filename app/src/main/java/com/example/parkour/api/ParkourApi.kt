@@ -7,7 +7,9 @@ import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ParkourApi {
@@ -25,6 +27,16 @@ interface ParkourApi {
 
     @GET("/api/competitions/{id}/courses")
     suspend fun getCoursesByCompetitionId(@Path("id")id:Int):Response<List<Courses>>
+
+
+    data class CompetitorRequest(val competitor_id: Int)
+    @POST("/api/competitions/{id}/add_competitor")
+    suspend fun addCompetitorToCompetitionById(
+        @Path("id")id:Int,
+        @Body request: CompetitorRequest
+        )
+
+
 
     //COMPETITORS
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.parkour.api.RetrofitInstance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parkour.api.ParkourApi
 import com.example.parkour.model.Competition
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
@@ -76,6 +77,21 @@ class CompetitionViewModel : ViewModel(){
             }
             else{
                 Log.i("Error :", response.message())
+            }
+        }
+    }
+
+
+    fun addCompetitorToCompetitionById(competitionID: Int, competitorID: Int){
+        viewModelScope.launch {
+            try {
+                val request = ParkourApi.CompetitorRequest(competitorID)
+                parkourApi.addCompetitorToCompetitionById(competitionID, request)
+                Log.i("Success", "Compétiteur $competitorID ajouté à la compétition $competitionID")
+
+                getInscriptionsByCompetitionId(competitionID)
+            }catch (e: Exception){
+                Log.e("Error", "Échec de l'ajout : ${e.message}")
             }
         }
     }

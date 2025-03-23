@@ -1,9 +1,11 @@
 package com.example.parkour
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,6 +26,7 @@ import com.example.parkour.views.Competitors
 import com.example.parkour.views.CompetitorRegistration
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,13 +55,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Routes.competitorRegistrationView + "/{competitionID}"){
-                            val competitionID = it.arguments?.getString("competitionID")
+                            val competitionID = it.arguments?.getString("competitionID").orEmpty().toInt()
                             CompetitorRegistration(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
                                 navController,
                                 competitionViewModel,
-                                competitionID.orEmpty()
+                                competitionID
                             )
                         }
                     })

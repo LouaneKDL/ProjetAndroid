@@ -1,5 +1,9 @@
 package com.example.parkour.views
 
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,19 +40,33 @@ import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
+
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
+
+// to convert date of birth to age
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CompetitorRegistration(modifier: Modifier = Modifier,
-                           competitorsViewModel: CompetitorsViewModel,
-                           navController: NavController,
-                           competitionsViewModel: CompetitionViewModel,
-                           competitionID: String
-                           ) {
+fun CompetitorRegistration(
+    modifier: Modifier = Modifier,
+    competitorsViewModel: CompetitorsViewModel,
+    navController: NavController,
+    competitionsViewModel: CompetitionViewModel,
+    competitionID: Int
+) {
 
     val competitors by competitorsViewModel.competitors.observeAsState(emptyList())
     competitorsViewModel.getData()
 
-    val registeredCompetitors by competitionsViewModel.competitions.observeAsState(emptyList())
-    competitionsViewModel.getInscriptionsByCompetitionId(competitionID.toInt())
+    val registeredCompetitors by competitionsViewModel.competitors.observeAsState(emptyList())
+    competitionsViewModel.getInscriptionsByCompetitionId(competitionID)
+    val registeredCompetitorIDs = registeredCompetitors.map { it.id }.toSet()
+
+    val competition by competitionsViewModel.competition.observeAsState()
+    competitionsViewModel.getCompetitionById(competitionID)
+
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -56,14 +75,15 @@ fun CompetitorRegistration(modifier: Modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.Start
         ) {
             Button(
                 onClick = {
-                navController.navigate(Routes.competitionView)
-                },
-                colors = ButtonColors(
+                    navController.navigate(Routes.competitionView)
+                }, colors = ButtonColors(
                     Color.Black,
                     contentColor = Color.White,
                     disabledContainerColor = Color.Gray,
@@ -113,28 +133,58 @@ fun CompetitorRegistration(modifier: Modifier = Modifier,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + competitor.gender,
-                                        fontSize = 13.sp
+                                        text = "        • " + competitor.gender, fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + competitor.born_at,
-                                        fontSize = 13.sp
+                                        text = "        • " + competitor.born_at, fontSize = 13.sp
                                     )
                                 }
                             }
                             item {
                                 Column {
-                                    if(registeredCompetitors.any{ it.id == competitor.id}){
+                                    if (competitor.id in registeredCompetitorIDs) {
                                         Text(
-                                            text = "Inscrit ",
+                                            text = "Inscrit",
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color.Green
                                         )
-                                    }else{
+                                    } else {
                                         Button(
-                                            onClick = {},
-                                            colors = ButtonColors(
+                                            onClick = {
+                                                // to be added to a specific class with additional functions of this type
+                                                val format = "yyyy-MM-dd"
+                                                val formater = DateTimeFormatter.ofPattern(format)
+                                                val birthDate =
+                                                    LocalDate.parse(competitor.born_at, formater)
+                                                val currentDate = LocalDate.now()
+                                                val age =
+                                                    Period.between(birthDate, currentDate).years
+
+                                                competition?.let {
+                                                    var errorMessages = mutableListOf<String>()
+                                                    if (age < it.age_min || age > it.age_max) {
+                                                        errorMessages.add("Âge non valide (${age} ans) requis : ${it.age_min} - ${it.age_max}")
+                                                    }
+                                                    if (competitor.gender != it.gender) {
+                                                        errorMessages.add("Genre non valide (${competitor.gender}) requis :${it.gender}")
+                                                    }
+                                                    if (errorMessages.isEmpty()) {
+                                                        competitionsViewModel.addCompetitorToCompetitionById(
+                                                            competitionID,
+                                                            competitor.id
+                                                        )
+                                                    } else {
+                                                        Toast.makeText(
+                                                            context,
+                                                            errorMessages.joinToString("\n"),
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
+                                                }
+
+                                                // competitionsViewModel.addCompetitorToCompetitionById(competitionID, competitor.id)
+                                            }, colors = ButtonColors(
                                                 Color.Black,
                                                 contentColor = Color.White,
                                                 disabledContainerColor = Color.Gray,
