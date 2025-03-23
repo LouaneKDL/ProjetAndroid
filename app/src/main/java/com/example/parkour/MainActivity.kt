@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,19 +16,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
-import com.example.parkour.viewModel.ObstaclesViewModel
-import com.example.parkour.viewModel.PerformanceObstaclesViewModel
+import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.Competition
+import com.example.parkour.views.Competitors
 import com.example.parkour.views.CompetitorRegistration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Unused
         val competitionViewModel = ViewModelProvider(this)[CompetitionViewModel::class.java]
+        val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
+        val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+
+        val viewModels = arrayOf(competitionViewModel, coursesViewModel, competitorsViewModel, performancesViewModel)
+
+        // val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
@@ -56,7 +62,7 @@ class MainActivity : ComponentActivity() {
                     /*
                     Competition(
                         modifier = Modifier.padding(innerPadding),
-                        competitionViewModel
+                        viewModels
                     )
                     */
                 }
