@@ -1,6 +1,7 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,31 +32,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.example.parkour.R
+import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 
 
 @SuppressLint("ResourceType")
 @Composable
-fun Competition(modifier: Modifier = Modifier, viewModels: Array<ViewModel>) {
+fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, navController: NavController) {
 
-    var buttonCoursesPressed by remember { mutableStateOf(-1) }
+    val competitions by viewModel.competitions.observeAsState(emptyList())
+    viewModel.getData()
 
-    if (buttonCoursesPressed != -1){
-        Parkour(modifier, viewModels, buttonCoursesPressed)
-    }
-    else{
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "Compétitions",
+            modifier = modifier.padding(10.dp),
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-        var viewModel : CompetitionViewModel = viewModels.get(0) as CompetitionViewModel
-        val competitions by viewModel.competitions.observeAsState(emptyList())
-        viewModel.getData()
-
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.LightGray),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Button(
+            modifier = Modifier.padding(10.dp),
+            onClick = {},
+            colors = ButtonColors(
+                Color.Black,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            ),
+            enabled = false
         ){
             Text(
                 text = "Compétitions",
@@ -87,27 +100,52 @@ fun Competition(modifier: Modifier = Modifier, viewModels: Array<ViewModel>) {
                     .clip(shape = RoundedCornerShape(8.dp))
                     .background(Color.White)
                     .padding(8.dp)
+            LazyColumn {
+                for (compet in competitions){
+                    item{
+                        LazyRow(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .width(300.dp)
+                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
 
-            ){
+                            item{
 
-                LazyColumn {
-                    for (compet in competitions){
-                        item{
-                            LazyRow(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .width(300.dp)
-                                    .border(width = 1.dp, color = Color.Black).padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-
-                                item{
-
-                                    Column {
-                                        Text(
-                                            text = "➣  " + compet.name,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold
+                                Column {
+                                    Text(
+                                        text = "➣  " + compet.name,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "        • " + compet.gender,
+                                        fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = "        • " + compet.age_min + " à " + compet.age_max,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                            }
+                            item{
+                                Column{
+                                    Button(
+                                        onClick = {
+                                            navController.navigate(Routes.competitorRegistrationView)
+                                            // Log.i("ugazuhfiuhfiuaho :", "blabla")
+                                        },
+                                        colors = ButtonColors(
+                                            Color.Black,
+                                            contentColor = Color.White,
+                                            disabledContainerColor = Color.Gray,
+                                            disabledContentColor = Color.White
+                                        )
+                                    ) {
+                                        Image(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
+                                            contentDescription = "concurrents"
                                         )
                                         Text(
                                             text = "        • " + compet.gender,

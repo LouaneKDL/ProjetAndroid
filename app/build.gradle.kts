@@ -60,4 +60,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    // To navigate through view
+    val nav_version = "2.8.9"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }
