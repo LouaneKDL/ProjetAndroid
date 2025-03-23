@@ -7,14 +7,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,12 +39,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
+import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.ObstaclesViewModel
+import com.example.parkour.viewModel.PerformanceObstaclesViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
 
 
 @SuppressLint("ResourceType")
@@ -71,35 +82,20 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
             enabled = false
         ){
             Text(
-                text = "Compétitions",
-                modifier = modifier.padding(10.dp),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold
+                text = "Ajouter une compétition",
+                modifier = modifier,
+                color = Color.White
             )
+        }
 
-            Button(
-                modifier = Modifier.padding(10.dp),
-                onClick = {},
-                colors = ButtonColors(
-                    Color.Black,
-                    contentColor = Color.White,
-                    disabledContainerColor = Color.Gray,
-                    disabledContentColor = Color.White
-                ),
-                enabled = false
-            ){
-                Text(
-                    text = "Ajouter une compétition",
-                    modifier = Modifier,
-                    color = Color.White
-                )
-            }
+        Column(
+            modifier = modifier
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .padding(8.dp)
 
-            Column(
-                modifier = modifier
-                    .clip(shape = RoundedCornerShape(8.dp))
-                    .background(Color.White)
-                    .padding(8.dp)
+        ){
+
             LazyColumn {
                 for (compet in competitions){
                     item{
@@ -147,48 +143,20 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                             imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
                                             contentDescription = "concurrents"
                                         )
-                                        Text(
-                                            text = "        • " + compet.gender,
-                                            fontSize = 13.sp
-                                        )
-                                        Text(
-                                            text = "        • " + compet.age_min + " à " + compet.age_max,
-                                            fontSize = 13.sp
-                                        )
                                     }
-                                }
-                                item{
-                                    Column{
-                                        Button(
-                                            onClick = {},
-                                            colors = ButtonColors(
-                                                Color.Black,
-                                                contentColor = Color.White,
-                                                disabledContainerColor = Color.Gray,
-                                                disabledContentColor = Color.White
-                                            )
-                                        ) {
-                                            Image(
-                                                imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
-                                                contentDescription = "concurrents"
-                                            )
-                                        }
-                                        Button(
-                                            onClick = {
-                                                buttonCoursesPressed = compet.id
-                                            },
-                                            colors = ButtonColors(
-                                                Color.Black,
-                                                contentColor = Color.White,
-                                                disabledContainerColor = Color.Gray,
-                                                disabledContentColor = Color.White
-                                            )
-                                        ) {
-                                            Image(
-                                                imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                                contentDescription = "parkours"
-                                            )
-                                        }
+                                    Button(
+                                        onClick = {},
+                                        colors = ButtonColors(
+                                            Color.Black,
+                                            contentColor = Color.White,
+                                            disabledContainerColor = Color.Gray,
+                                            disabledContentColor = Color.White
+                                        )
+                                    ) {
+                                        Image(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
+                                            contentDescription = "parkours"
+                                        )
                                     }
                                 }
                             }
@@ -196,8 +164,9 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                     }
                 }
             }
-
         }
+
+
 
     }
 

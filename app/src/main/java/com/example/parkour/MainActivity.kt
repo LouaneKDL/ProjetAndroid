@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Unused
         val competitionViewModel = ViewModelProvider(this)[CompetitionViewModel::class.java]
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
@@ -34,8 +35,7 @@ class MainActivity : ComponentActivity() {
 
         val viewModels = arrayOf(competitionViewModel, coursesViewModel, competitorsViewModel, performancesViewModel)
 
-        val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
-        // vueInscriptionConcurrent
+        // val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
