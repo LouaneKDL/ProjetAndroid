@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,13 +31,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
+import com.example.parkour.Routes
+import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
 @Composable
-fun CompetitorRegistration(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, navController: NavController) {
+fun CompetitorRegistration(modifier: Modifier = Modifier,
+                           competitorsViewModel: CompetitorsViewModel,
+                           navController: NavController,
+                           competitionsViewModel: CompetitionViewModel,
+                           competitionID: String
+                           ) {
 
-    val competitors by viewModel.competitors.observeAsState(emptyList())
-    viewModel.getData()
+    val competitors by competitorsViewModel.competitors.observeAsState(emptyList())
+    competitorsViewModel.getData()
+
+    val registeredCompetitors by competitionsViewModel.competitions.observeAsState(emptyList())
+    competitionsViewModel.getInscriptionsByCompetitionId(competitionID.toInt())
 
     Column(
         modifier = modifier
@@ -43,31 +55,34 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModel: Competitors
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Button(
+                onClick = {
+                navController.navigate(Routes.competitionView)
+                },
+                colors = ButtonColors(
+                    Color.Black,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.Gray,
+                    disabledContentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Retour"
+                )
+            }
+        }
+
+
         Text(
             text = "Concurrents",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
-        /*
-        Button(
-            modifier = Modifier.padding(10.dp),
-            onClick = {},
-            colors = ButtonColors(
-                Color.Black,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White
-            ),
-            enabled = false
-        ) {
-            Text(
-                text = "Ajouter une compétition",
-                modifier = modifier,
-                color = Color.White
-            )
-        }
-        */
 
         Column(
             modifier = modifier
@@ -109,34 +124,30 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModel: Competitors
                             }
                             item {
                                 Column {
-                                    Button(
-                                        onClick = {},
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
+                                    if(registeredCompetitors.any{ it.id == competitor.id}){
+                                        Text(
+                                            text = "Inscrit ",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.Green
                                         )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
-                                            contentDescription = "concurrents"
-                                        )
+                                    }else{
+                                        Button(
+                                            onClick = {},
+                                            colors = ButtonColors(
+                                                Color.Black,
+                                                contentColor = Color.White,
+                                                disabledContainerColor = Color.Gray,
+                                                disabledContentColor = Color.White
+                                            )
+                                        ) {
+                                            Text(
+                                                text = "Inscrire",
+                                            )
+                                        }
                                     }
-                                    Button(
-                                        onClick = {},
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                            contentDescription = "parkours"
-                                        )
-                                    }
+
+
                                 }
                             }
                         }

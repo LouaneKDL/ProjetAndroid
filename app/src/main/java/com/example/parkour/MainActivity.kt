@@ -51,11 +51,14 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(Routes.competitorRegistrationView){
+                        composable(Routes.competitorRegistrationView + "/{competitionID}"){
+                            val competitionID = it.arguments?.getString("competitionID")
                             CompetitorRegistration(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
-                                navController
+                                navController,
+                                competitionViewModel,
+                                competitionID.orEmpty()
                             )
                         }
                     })
