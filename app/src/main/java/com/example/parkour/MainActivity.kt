@@ -21,6 +21,7 @@ import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
 import com.example.parkour.views.Parkour
+import com.example.parkour.views.ParkourRegistration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,18 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        composable("parkour_registration_view/{id}"){
+                            backStackEntry ->
+                                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                            ParkourRegistration(
+                                modifier = Modifier.padding(innerPadding),
+                                coursesViewModel,
+                                competitionViewModel,
+                                navController,
+                                id
+                            )
+                        }
+
                         composable("parkour_view/{id}"){
                             backStackEntry ->
                                 val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
@@ -80,6 +93,9 @@ class MainActivity : ComponentActivity() {
                                 idCourse
                             )
                         }
+
+
+
 
 
 

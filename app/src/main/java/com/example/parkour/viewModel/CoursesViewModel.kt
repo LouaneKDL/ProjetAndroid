@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
+import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performances
@@ -82,7 +83,7 @@ class CoursesViewModel : ViewModel() {
     private val _postCourse = MutableLiveData<Courses>()
     val postCourse: LiveData<Courses> = _postCourse
 
-    fun postCourse(courses: Courses){
+    fun postCourse(courses: CourseRequest){
         viewModelScope.launch {
             val response = parkourApi.postCourse(courses)
             if(response.isSuccessful){

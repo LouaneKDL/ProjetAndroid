@@ -3,6 +3,7 @@ package com.example.parkour.api
 import com.example.parkour.model.Competition
 import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.model.Competitors
+import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performance_obstacles
@@ -91,7 +92,7 @@ interface ParkourApi {
     suspend fun getCourseById(@Path("id")id: Int): Response<Courses>
 
     @POST("/api/courses")
-    suspend fun postCourse(@Body courses: Courses): Response<Courses>
+    suspend fun postCourse(@Body courses: CourseRequest): Response<Courses>
 
     @POST("/api/course/{id}/add_obstacle")
     suspend fun postObstacleToCourseById(@Path("id")id: Int, @Body obstacles: Obstacles): Response<Obstacles>

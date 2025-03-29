@@ -63,14 +63,14 @@ fun Parkour(
 
         Button(
             modifier = Modifier.padding(10.dp),
-            onClick = {},
+            onClick = {navController.navigate("parkour_registration_view/${idCompetition}")},
             colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
             ),
-            enabled = false
+            enabled = true
         ){
             Text(
                 text = "Ajouter un parkour",

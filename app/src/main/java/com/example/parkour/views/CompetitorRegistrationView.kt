@@ -35,13 +35,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
     var bornAtError by remember { mutableStateOf(false) }
 
     val competitorResponse by competitionViewModel.competitorPost.observeAsState()
-    var competitorId by remember { mutableStateOf(-1) }
 
-    LaunchedEffect(competitorResponse) {
-        competitorResponse?.let { competitor ->
-            competitorId = competitor.id
-        }
-    }
 
 
     Column(
@@ -192,7 +186,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
                     val competitor = CompetitorRequest(firstName, lastName, email, phone, gender, bornAt)
                     viewModelCompetitor.postCompetitor(competitor)
 
-                    competitionViewModel.postCompetitorToCompetitionById(competitorId, competitor)
+                 //à fix   competitionViewModel.postCompetitorToCompetitionById(0, competitor)
                     navController.popBackStack()
                 }
             },
