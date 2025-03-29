@@ -30,8 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.model.Competitors
+import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
 
 
 @SuppressLint("ResourceType")
@@ -40,6 +42,7 @@ fun Competitors(
     modifier: Modifier = Modifier,
     competitionViewModel: CompetitionViewModel,
     competitorsViewModel: CompetitorsViewModel,
+    performancesViewModel: PerformancesViewModel,
     navController: NavController,
     idCompetition: Int?,
     idCourse: Int?
@@ -66,6 +69,9 @@ fun Competitors(
         }
 
     }
+
+    val details by performancesViewModel.performances.observeAsState(emptyList())
+    performancesViewModel.getData()
 
     Column(
         modifier = modifier
@@ -124,12 +130,56 @@ fun Competitors(
                                         text = "        • " + competitor.phone,
                                         fontSize = 13.sp
                                     )
+
+                                    var detailCompetitor : Performances? = null
+                                    for (detail in details){
+                                        if (detail.course_id == idCourse && detail.competitor_id == competitor.id){
+                                            detailCompetitor = detail
+                                        }
+                                    }
+
+                                    if (detailCompetitor != null){
+                                        Text(
+                                            text = "        • Statut du parkour : " +
+                                                    if (detailCompetitor.status == "over") {
+                                                        "terminé"
+                                                    }
+                                                    else if (detailCompetitor.status == "to_verify"){
+                                                        "à vérifier"
+                                                    }
+                                                    else if (detailCompetitor.status == "to_finish"){
+                                                        "à finir"
+                                                    }
+                                                    else{
+                                                        "défection"
+                                                    },
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • Durée totale : " + detail_competitor.total_time/20/60 + " minutes",
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                    else{
+                                        Text(
+                                            text = "        • Statut du parkour : non commencé",
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • Durée totale : non commencé",
+                                            fontSize = 13.sp
+                                        )
+                                    }
+
+
                                 }
                             }
                             item{
                                 Column{
                                     Button(
-                                        onClick = {},
+                                        onClick = {
+                                            navController.navigate("obstacles_view/${competitor.id}/${idCourse}")
+                                        },
                                         colors = ButtonColors(
                                             Color.Black,
                                             contentColor = Color.White,

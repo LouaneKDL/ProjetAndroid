@@ -107,7 +107,7 @@ fun Parkour(
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • durée maximale : " + parkour.max_duration,
+                                        text = "        • durée maximale : " + parkour.max_duration/60 + " minutes",
                                         fontSize = 13.sp
                                     )
                                     Text(

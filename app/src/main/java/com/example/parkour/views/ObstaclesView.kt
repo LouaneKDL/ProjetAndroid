@@ -30,20 +30,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.CoursesViewModel
 
 @SuppressLint("ResourceType")
 @Composable
 fun Obstacles(
     modifier: Modifier = Modifier,
     competitorViewModel: CompetitorsViewModel,
+    coursesViewModel: CoursesViewModel,
     navController: NavController,
-    idCompetitor: Int?
+    idCompetitor: Int?,
+    idCourse: Int?
 ) {
 
     //competitors of a competition
-    val detailsPerformances by competitorViewModel.detailPerformances.observeAsState(emptyList())
-    if (idCompetitor != null) {
-        competitorViewModel.getPerformanceDetailsByCompetitor(idCompetitor)
+    val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
+    if (idCourse != null) {
+        coursesViewModel.getObstaclesByCourseId(idCourse)
     }
 
     Column(
@@ -53,7 +56,7 @@ fun Obstacles(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Compétiteurs",
+            text = "Obstacles",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
@@ -68,8 +71,7 @@ fun Obstacles(
         ){
 
             LazyColumn {
-                //for (competitor in competitorsList){
-                /*
+                for (obstacle in obstacles){
 
                     item{
                         LazyRow(
@@ -84,24 +86,16 @@ fun Obstacles(
 
                                Column {
                                     Text(
-                                        text = "➣  " + competitor.first_name + " " + competitor.last_name,
+                                        text = "➣  " + obstacle.name + " id = " + obstacle.id,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + competitor.gender,
+                                        text = "        • " + obstacle.created_at,
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + competitor.born_at,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.email,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.phone,
+                                        text = "        • " + obstacle.updated_at,
                                         fontSize = 13.sp
                                     )
                                 }
@@ -123,8 +117,8 @@ fun Obstacles(
                                         )
                                     }
                                 }
-                            }*/
-                        //}
+                            }
+                        }
                     }
                 }
             }

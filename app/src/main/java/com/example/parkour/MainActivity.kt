@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.parkour.model.Obstacles
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
@@ -20,6 +21,7 @@ import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
+import com.example.parkour.views.Obstacles
 import com.example.parkour.views.Parkour
 
 class MainActivity : ComponentActivity() {
@@ -74,8 +76,23 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
                                 competitorsViewModel,
+                                performancesViewModel,
                                 navController,
                                 idCompetition,
+                                idCourse
+                            )
+                        }
+
+                        composable("obstacles_view/{idCompetitor}/{idCourse}"){
+                            backStackEntry ->
+                                val idCompetitor = backStackEntry.arguments?.getString("idCompetitor")?.toIntOrNull()
+                                val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
+                            Obstacles(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                coursesViewModel,
+                                navController,
+                                idCompetitor,
                                 idCourse
                             )
                         }
