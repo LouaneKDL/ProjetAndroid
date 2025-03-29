@@ -49,6 +49,12 @@ fun Obstacles(
         coursesViewModel.getObstaclesByCourseId(idCourse)
     }
 
+    //competitor concerned
+    val competitor by competitorViewModel.competitor.observeAsState()
+    if (idCompetitor != null) {
+        competitorViewModel.getCompetitorById(idCompetitor)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,6 +75,13 @@ fun Obstacles(
                 .padding(8.dp)
 
         ){
+
+            Text(
+                text = "Parkour de " + (competitor?.first_name ?: "") + " " + (competitor?.last_name ?: ""),
+                modifier = modifier.padding(10.dp),
+                fontSize = 23.sp,
+                fontWeight = FontWeight.Bold
+            )
 
             LazyColumn {
                 for (obstacle in obstacles){

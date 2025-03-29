@@ -156,7 +156,7 @@ fun Competitors(
                                             fontSize = 13.sp
                                         )
                                         Text(
-                                            text = "        • Durée totale : " + detail_competitor.total_time/20/60 + " minutes",
+                                            text = "        • Durée totale : " + detailCompetitor.total_time/20/60 + " minutes",
                                             fontSize = 13.sp
                                         )
                                     }
