@@ -129,7 +129,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                 Column{
                                     Button(
                                         onClick = {
-                                            navController.navigate(Routes.competitorRegistrationView)
+                                            navController.navigate(Routes.competitorView)
                                         },
                                         colors = ButtonColors(
                                             Color.Black,

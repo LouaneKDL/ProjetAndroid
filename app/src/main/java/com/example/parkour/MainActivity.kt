@@ -47,11 +47,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(Routes.competitorRegistrationView){
+                        composable("competition_registration_view"){
                             CompetitorRegistration(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
-                                navController
+                                competitionViewModel,
+                                navController,
                             )
                         }
 
