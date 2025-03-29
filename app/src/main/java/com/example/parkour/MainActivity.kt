@@ -24,6 +24,9 @@ import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.Competition
 import com.example.parkour.views.Competitors
 import com.example.parkour.views.CompetitorRegistration
+import com.example.parkour.views.Parkour
+import com.example.parkour.views.PotentialCompetitorRegistration
+import okhttp3.Route
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -64,13 +67,37 @@ class MainActivity : ComponentActivity() {
                                 competitionID
                             )
                         }
+
+                        composable(Routes.potentialCompetitorRegistrationView + "/{competitionID}"){
+                            val competitionID = it.arguments?.getString("competitionID").orEmpty().toInt()
+                            PotentialCompetitorRegistration(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                navController,
+                                competitionViewModel,
+                                competitionID
+                            )
+                        }
+
+                        composable(Routes.parkourView + "/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                            Parkour(
+                                modifier = Modifier.padding(innerPadding),
+                                coursesViewModel,
+                                navController,
+                                id
+                            )
+                        }
+
+                        composable(Routes.competitorView){
+                            Competitors(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                navController
+                            )
+                        }
                     })
-                    /*
-                    Competition(
-                        modifier = Modifier.padding(innerPadding),
-                        viewModels
-                    )
-                    */
                 }
             }
         }

@@ -18,9 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,152 +27,145 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.example.parkour.R
+import com.example.parkour.Routes
 import com.example.parkour.viewModel.CoursesViewModel
 
 
 @SuppressLint("ResourceType")
 @Composable
-fun Parkour(modifier: Modifier = Modifier, viewModels: Array<ViewModel>, buttonCoursesPressed: Int) {
+fun Parkour(
+    modifier: Modifier = Modifier,
+    viewModel: CoursesViewModel,
+    navController: NavController,
+    id_competition: Int?
+) {
 
-    var buttonCompetitorsPressed by remember { mutableStateOf(arrayOf(-1,-1)) } //competitionId and courseId
-    var buttonPerformancesPressed by remember { mutableStateOf(arrayOf(-1,-1)) }
+    val parkours by viewModel.courses.observeAsState(emptyList())
+    viewModel.getData()
 
-    if (!buttonCompetitorsPressed.contentEquals(arrayOf(-1,-1))){
-        Competitors(modifier, viewModels, buttonCompetitorsPressed)
-    }
-    else if (!buttonPerformancesPressed.contentEquals(arrayOf(-1,-1))){
-        //TODO
-    }
-    else{
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "Parkours",
+            modifier = modifier.padding(10.dp),
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-        var viewModel : CoursesViewModel = viewModels.get(1) as CoursesViewModel
-        val parkours by viewModel.courses.observeAsState(emptyList())
-        viewModel.getData()
+        Button(
+            modifier = Modifier.padding(10.dp),
+            onClick = {},
+            colors = ButtonColors(
+                Color.Black,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            ),
+            enabled = false
+        ){
+            Text(
+                text = "Ajouter un parkour",
+                modifier = Modifier,
+                color = Color.White
+            )
+        }
 
         Column(
             modifier = modifier
-                .fillMaxSize()
-                .background(Color.LightGray),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(Color.White)
+                .padding(8.dp)
+
         ){
-            Text(
-                text = "Parkours",
-                modifier = modifier.padding(10.dp),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold
-            )
 
-            Button(
-                modifier = Modifier.padding(10.dp),
-                onClick = {},
-                colors = ButtonColors(
-                    Color.Black,
-                    contentColor = Color.White,
-                    disabledContainerColor = Color.Gray,
-                    disabledContentColor = Color.White
-                ),
-                enabled = false
-            ){
-                Text(
-                    text = "Ajouter un parkour",
-                    modifier = Modifier,
-                    color = Color.White
-                )
-            }
+            LazyColumn {
+                for (parkour in parkours){
 
-            Column(
-                modifier = modifier
-                    .clip(shape = RoundedCornerShape(8.dp))
-                    .background(Color.White)
-                    .padding(8.dp)
+                    if (id_competition == parkour.competition_id){
 
-            ){
+                        item{
+                            LazyRow(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .width(300.dp)
+                                    .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
 
-                LazyColumn {
-                    for (parkour in parkours){
+                                item{
 
-                        if (buttonCoursesPressed == parkour.competition_id){
-
-                            item{
-                                LazyRow(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .width(300.dp)
-                                        .border(width = 1.dp, color = Color.Black).padding(10.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    item{
-
-                                        Column {
-                                            Text(
-                                                text = "➣  " + parkour.name,
-                                                fontSize = 15.sp,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                            Text(
-                                                text = "        • durée maximale : " + parkour.max_duration,
-                                                fontSize = 13.sp
-                                            )
-                                            Text(
-                                                text = "        • position : " + parkour.position,
-                                                fontSize = 13.sp
-                                            )
-                                            Text(
-                                                text = "        • " + if (parkour.is_over == 1) {
-                                                    "terminé"
+                                    Column {
+                                        Text(
+                                            text = "➣  " + parkour.name,
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = "        • durée maximale : " + parkour.max_duration,
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • position : " + parkour.position,
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • " + if (parkour.is_over == 1) {
+                                                "terminé"
+                                            } else {
+                                                "non terminé"
+                                            },
+                                            fontSize = 13.sp,
+                                            color = if (parkour.is_over == 1) {
+                                                Color.Green
+                                            } else {
+                                                Color.Red
+                                            }
+                                        )
+                                    }
+                                }
+                                item{
+                                    Column{
+                                        Button(
+                                            onClick = {
+                                                if (parkour.is_over == 0) {
+                                                    navController.navigate(Routes.competitorView)
                                                 } else {
-                                                    "non terminé"
+                                                    //classement
+                                                }
+                                            },
+                                            colors = ButtonColors(
+                                                Color.Black,
+                                                contentColor = Color.White,
+                                                disabledContainerColor = Color.Gray,
+                                                disabledContentColor = Color.White
+                                            )
+                                        ) {
+                                            Image(
+                                                imageVector = if (parkour.is_over == 0) {
+                                                    ImageVector.vectorResource(R.drawable.baseline_people_alt_24)
+                                                } else {
+                                                    ImageVector.vectorResource(R.drawable.baseline_elevator_24)
                                                 },
-                                                fontSize = 13.sp,
-                                                color = if (parkour.is_over == 1) {
-                                                    Color.Green
+                                                contentDescription = if (parkour.is_over == 0) {
+                                                    "concurrents"
                                                 } else {
-                                                    Color.Red
+                                                    "podium"
                                                 }
                                             )
                                         }
                                     }
-                                    item{
-                                        Column{
-                                            Button(
-                                                onClick = {
-                                                    if (parkour.is_over == 0) {
-                                                        buttonCompetitorsPressed = arrayOf(parkour.competition_id,parkour.id)
-                                                    } else {
-                                                        buttonPerformancesPressed = arrayOf(parkour.competition_id,parkour.id)
-                                                    }
-                                                },
-                                                colors = ButtonColors(
-                                                    Color.Black,
-                                                    contentColor = Color.White,
-                                                    disabledContainerColor = Color.Gray,
-                                                    disabledContentColor = Color.White
-                                                )
-                                            ) {
-                                                Image(
-                                                    imageVector = if (parkour.is_over == 0) {
-                                                        ImageVector.vectorResource(R.drawable.baseline_people_alt_24)
-                                                    } else {
-                                                        ImageVector.vectorResource(R.drawable.baseline_elevator_24)
-                                                    },
-                                                    contentDescription = if (parkour.is_over == 0) {
-                                                        "concurrents"
-                                                    } else {
-                                                        "podium"
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
                                 }
                             }
-
                         }
 
                     }
+
                 }
             }
         }

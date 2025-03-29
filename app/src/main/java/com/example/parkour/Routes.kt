@@ -4,5 +4,7 @@ object Routes {
 
     var competitionView = "competition_view"
     var competitorRegistrationView = "competition_registration_view"
-
+    var parkourView = "parkour_view/{id}"
+    var competitorView = "competitor_view"
+    var potentialCompetitorRegistrationView = "competition_registration_view"
 }

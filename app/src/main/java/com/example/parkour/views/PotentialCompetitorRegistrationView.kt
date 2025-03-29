@@ -48,7 +48,7 @@ import java.time.format.DateTimeFormatter
 // to convert date of birth to age
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CompetitorRegistration(
+fun PotentialCompetitorRegistration(
     modifier: Modifier = Modifier,
     competitorsViewModel: CompetitorsViewModel,
     navController: NavController,
@@ -105,7 +105,7 @@ fun CompetitorRegistration(
         )
         Button(
             onClick = {
-                navController.navigate("parkour_view/${competitionID}")
+                navController.navigate(Routes.parkourView + "/${competitionID}")
             }, colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
