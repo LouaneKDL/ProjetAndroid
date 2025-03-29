@@ -1,8 +1,13 @@
 package com.example.parkour.viewModel
 
+import android.Manifest
+import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,23 +34,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.wear.compose.material.dialog.Confirmation
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkour.R
 
 @Composable
-fun AddObstacleView(modifier: Modifier) {
+fun AddObstacleView(modifier: Modifier)  {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 imageUri = it
-                Log.i("image", "Selected image URI: $it")
             }
         }
+    var state by remember {  mutableStateOf(StateRequestAuthorization.UNKNOWN) }
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            state = StateRequestAuthorization.AUTHORIZES
+            launcher.launch("image/*")
+        } else {
+            state = StateRequestAuthorization.REFUSES
+        }
+    }
     Column(
-        modifier = modifier.fillMaxSize().background(Color.LightGray),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -72,7 +91,6 @@ fun AddObstacleView(modifier: Modifier) {
                 modifier = Modifier.padding(end = 20.dp)
             )
         }
-        val configuration = LocalConfiguration.current
 
 
             Row(
@@ -88,13 +106,21 @@ fun AddObstacleView(modifier: Modifier) {
                         bottom = 30.dp
                     )
                 )
+                val  context = LocalContext.current
+               Button(onClick = { Confirmation(
+                   context = context, modifier = modifier,
+                   launcher = launcher
+               ) }) {
+                   Text("Sélectionner une image")
+               }
 
-                Button(onClick = { launcher.launch("image/*") }) {
-                    Text("Sélectionner une image")
 
 
-                }
+
+
+
             }
+
 
             imageUri?.let { uri ->
                 //  Text("oui")
@@ -110,7 +136,29 @@ fun AddObstacleView(modifier: Modifier) {
                 )
             }
         }
+}
 
 
-    
+
+
+@Composable
+fun Confirmation(context: Context, modifier: Modifier = Modifier, launcher: ActivityResultLauncher<String>){
+    Column(modifier = modifier) {
+        Text(
+            text = "Nous avons besoin de ... voulez-vous l'activer?",
+            modifier = modifier.padding(20.dp)
+        )
+        Button(onClick = {
+            launcher.launch(Manifest.permission.CAMERA)
+        },
+            modifier = modifier) {
+            Text("Autoriser")
+        }
+        Button(onClick = {
+
+        },
+            modifier = modifier) {
+            Text("Refuser")
+        }
+    }
 }
