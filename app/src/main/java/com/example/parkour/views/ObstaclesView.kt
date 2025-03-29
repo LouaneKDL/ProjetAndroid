@@ -29,42 +29,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
-import com.example.parkour.model.Competitors
-import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
-
 
 @SuppressLint("ResourceType")
 @Composable
-fun Competitors(
+fun Obstacles(
     modifier: Modifier = Modifier,
-    competitionViewModel: CompetitionViewModel,
-    competitorsViewModel: CompetitorsViewModel,
+    competitorViewModel: CompetitorsViewModel,
     navController: NavController,
-    idCompetition: Int?,
-    idCourse: Int?
+    idCompetitor: Int?
 ) {
 
     //competitors of a competition
-    val competitors by competitionViewModel.competitors.observeAsState(emptyList())
-    if (idCompetition != null) {
-        competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
-    }
-
-    //competitors of a course
-    var competitorsList = mutableListOf<Competitors>()
-
-    for (competitor in competitors){
-
-        val courses by competitorsViewModel.courses.observeAsState(emptyList())
-        competitorsViewModel.getCoursesByACompetitor(competitor.id)
-        for (course in courses){
-            if (course.id == idCourse){ //if a course of a competitior is the one wanted, we add the competitor
-                competitorsList.add(competitor)
-                break
-            }
-        }
-
+    val detailsPerformances by competitorViewModel.detailPerformances.observeAsState(emptyList())
+    if (idCompetitor != null) {
+        competitorViewModel.getPerformanceDetailsByCompetitor(idCompetitor)
     }
 
     Column(
@@ -89,7 +68,8 @@ fun Competitors(
         ){
 
             LazyColumn {
-                for (competitor in competitorsList){
+                //for (competitor in competitorsList){
+                /*
 
                     item{
                         LazyRow(
@@ -102,7 +82,7 @@ fun Competitors(
 
                             item{
 
-                                Column {
+                               Column {
                                     Text(
                                         text = "➣  " + competitor.first_name + " " + competitor.last_name,
                                         fontSize = 15.sp,
@@ -143,8 +123,8 @@ fun Competitors(
                                         )
                                     }
                                 }
-                            }
-                        }
+                            }*/
+                        //}
                     }
                 }
             }

@@ -60,19 +60,26 @@ class MainActivity : ComponentActivity() {
                                 val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
                             Parkour(
                                 modifier = Modifier.padding(innerPadding),
-                                coursesViewModel,
+                                competitionViewModel,
                                 navController,
                                 id
                             )
                         }
 
-                        composable(Routes.competitorView){
+                        composable("competitor_view/{idCompetition}/{idCourse}"){
+                            backStackEntry ->
+                                val idCompetition = backStackEntry.arguments?.getString("idCompetition")?.toIntOrNull()
+                                val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
                             Competitors(
                                 modifier = Modifier.padding(innerPadding),
+                                competitionViewModel,
                                 competitorsViewModel,
-                                navController
+                                navController,
+                                idCompetition,
+                                idCourse
                             )
                         }
+
 
 
                     })
