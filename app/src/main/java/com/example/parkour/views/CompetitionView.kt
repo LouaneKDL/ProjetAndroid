@@ -83,7 +83,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
         ){
             Text(
                 text = "Ajouter une compétition",
-                modifier = modifier,
+                modifier = Modifier,
                 color = Color.White
             )
         }
@@ -97,7 +97,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
         ){
 
             LazyColumn {
-                for (compet in competitions){
+                for (compete in competitions){
                     item{
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
@@ -111,16 +111,16 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
 
                                 Column {
                                     Text(
-                                        text = "➣  " + compet.name,
+                                        text = "➣  " + compete.name,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + compet.gender,
+                                        text = "        • " + compete.gender,
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + compet.age_min + " à " + compet.age_max,
+                                        text = "        • " + compete.age_min + " à " + compete.age_max,
                                         fontSize = 13.sp
                                     )
                                 }
@@ -130,7 +130,6 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                     Button(
                                         onClick = {
                                             navController.navigate(Routes.competitorRegistrationView)
-                                            // Log.i("ugazuhfiuhfiuaho :", "blabla")
                                         },
                                         colors = ButtonColors(
                                             Color.Black,
@@ -145,7 +144,9 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                         )
                                     }
                                     Button(
-                                        onClick = {},
+                                        onClick = {
+                                            navController.navigate("parkour_view/${compete.id}")
+                                        },
                                         colors = ButtonColors(
                                             Color.Black,
                                             contentColor = Color.White,

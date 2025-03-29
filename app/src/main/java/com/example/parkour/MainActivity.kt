@@ -7,8 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -20,8 +18,9 @@ import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.Competition
-import com.example.parkour.views.Competitors
 import com.example.parkour.views.CompetitorRegistration
+import com.example.parkour.views.Competitors
+import com.example.parkour.views.Parkour
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,9 +32,6 @@ class MainActivity : ComponentActivity() {
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
 
-        val viewModels = arrayOf(competitionViewModel, coursesViewModel, competitorsViewModel, performancesViewModel)
-
-        // val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
@@ -58,6 +54,27 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
+
+                        composable("parkour_view/{id}"){
+                            backStackEntry ->
+                                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                            Parkour(
+                                modifier = Modifier.padding(innerPadding),
+                                coursesViewModel,
+                                navController,
+                                id
+                            )
+                        }
+
+                        composable(Routes.competitorView){
+                            Competitors(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                navController
+                            )
+                        }
+
+
                     })
                     /*
                     Competition(
