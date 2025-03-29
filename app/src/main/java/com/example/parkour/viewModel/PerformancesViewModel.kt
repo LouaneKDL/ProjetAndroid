@@ -63,6 +63,54 @@ class PerformancesViewModel : ViewModel(){
         }
     }
 
+    private val _postPerformances = MutableLiveData<Performances>()
+    val postPerformance: LiveData<Performances> = _postPerformances
+
+    fun postPerformances(performances: Performances){
+        viewModelScope.launch{
+            val response = parkourApi.postPerformances(performances)
+            if(response.isSuccessful){
+                _postPerformances.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+
+    fun updatePerformance(id: Int, updatedPerformances: Performances) {
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.putPerformances(id, updatedPerformances)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+
+    fun deletePerformance(id:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deletePerformance(id)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Performance delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
 
 
 

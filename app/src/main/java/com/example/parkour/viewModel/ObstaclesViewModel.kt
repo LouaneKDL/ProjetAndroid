@@ -43,4 +43,37 @@ class ObstaclesViewModel : ViewModel() {
         }
     }
 
+    private val _postObstacle = MutableLiveData<Obstacles>()
+    val postObstacle: LiveData<Obstacles> = _postObstacle
+
+    fun updateObstacles(id: Int, updatedObstacles: Obstacles) {
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.putObstacles(id, updatedObstacles)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteObstacle(id:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteObstacle(id)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Obstacle delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
 }

@@ -80,4 +80,84 @@ class CompetitionViewModel : ViewModel(){
         }
     }
 
+    private val _competitionPost = MutableLiveData<Competition>()
+    val competitionPost: LiveData<Competition> = _competitionPost
+
+    fun postCompetition(competition: Competition){
+        viewModelScope.launch {
+            val response = parkourApi.postCompetitions(competition)
+            if(response.isSuccessful){
+                _competitionPost.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    private val _competitorPost = MutableLiveData<Competitors>()
+    val competitorPost: LiveData<Competitors> = _competitorPost
+
+    fun postCompetitorToCompetitionById(competitionId: Int, competitors: Competitors){
+        viewModelScope.launch {
+            val response = parkourApi.postCompetitorsToCompetitionById(competitionId,competitors)
+            if(response.isSuccessful){
+                _competitorPost.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    fun updateCompetition(id: Int, updatedCompetition: Competition) {
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.putCompetition(id, updatedCompetition)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Compétition mise à jour : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCompetition(id:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteCompetitionById(id)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Compétition delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCompetition(id:Int, idCompetitior: Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteCompetitorFromCompetition(id, idCompetitior)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Competitor delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+
+
+
 }

@@ -79,4 +79,99 @@ class CoursesViewModel : ViewModel() {
         }
     }
 
+    private val _postCourse = MutableLiveData<Courses>()
+    val postCourse: LiveData<Courses> = _postCourse
+
+    fun postCourse(courses: Courses){
+        viewModelScope.launch {
+            val response = parkourApi.postCourse(courses)
+            if(response.isSuccessful){
+                _postCourse.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    private val _postObstacleCourse = MutableLiveData<Obstacles>()
+    val postObstaclesCourse: LiveData<Obstacles> = _postObstacleCourse
+
+    fun postObstacleToCourseById(id: Int, obstacles: Obstacles){
+        viewModelScope.launch {
+            val response = parkourApi.postObstacleToCourseById(id,obstacles)
+            if(response.isSuccessful){
+                _postObstacleCourse.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    private val _updateObstaclePositionCourse = MutableLiveData<Obstacles>()
+    val updateObstaclePositionCourse: LiveData<Obstacles> = _updateObstaclePositionCourse
+
+    fun postObstacleInCertainPositionByCourseId(id: Int, obstacles: Obstacles){
+        viewModelScope.launch {
+            val response = parkourApi.postObstacleInCertainPositionByCourseId(id,obstacles)
+            if(response.isSuccessful){
+                _updateObstaclePositionCourse.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    fun updateCourse(id: Int, updatedCourse: Courses) {
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.putCourses(id, updatedCourse)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCourses(id:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteCourse(id)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Course delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteObstacleFromCourse(id:Int, idObstacles:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteObstacleFromCourse(id, idObstacles)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Obstacle delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+
+
 }

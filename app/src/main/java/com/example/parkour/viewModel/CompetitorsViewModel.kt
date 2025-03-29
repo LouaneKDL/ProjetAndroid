@@ -96,4 +96,51 @@ class CompetitorsViewModel : ViewModel() {
         }
     }
 
+    private val _competitorsPost = MutableLiveData<Competitors>()
+    val competitorsPost: LiveData<Competitors> = _competitorsPost
+
+    fun postCompetitor(competitors: Competitors){
+        viewModelScope.launch{
+            val response = parkourApi.postCompetitors(competitors)
+            if(response.isSuccessful){
+                _competitorsPost.postValue(response.body())
+                Log.i("Reponse :",response.body().toString())
+            }
+            else{
+                Log.i("Error :", response.message())
+            }
+        }
+    }
+
+    fun updateCompetitor(id: Int, updatedCompetitor: Competitors) {
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.putCompetitors(id, updatedCompetitor)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Compétiteur mis à jour : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCompetitor(id:Int){
+        viewModelScope.launch {
+            try {
+                val response = parkourApi.deleteCompetitor(id)
+                if (response.isSuccessful) {
+                    Log.i("Success", "Competitor delete : ${response.body()}")
+                } else {
+                    Log.e("Error", "Erreur lors du delete: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Exception", "Erreur : ${e.message}")
+            }
+        }
+    }
+
+
 }
