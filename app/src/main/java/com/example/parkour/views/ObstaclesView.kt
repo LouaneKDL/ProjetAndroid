@@ -29,24 +29,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
-import com.example.parkour.Routes
-import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.viewModel.CoursesViewModel
-
+import com.example.parkour.viewModel.CompetitorsViewModel
 
 @SuppressLint("ResourceType")
 @Composable
-fun Parkour(
+fun Obstacles(
     modifier: Modifier = Modifier,
-    viewModel: CompetitionViewModel,
+    competitorViewModel: CompetitorsViewModel,
     navController: NavController,
-    idCompetition: Int?
+    idCompetitor: Int?
 ) {
 
-    val parkours by viewModel.courses.observeAsState(emptyList())
-    if (idCompetition != null) {
-        viewModel.getCoursesByCompetitionId(idCompetition)
-    }
+    //competitors of a competition
+   /* val detailsPerformances by competitorViewModel.detailPerformances.observeAsState(emptyList())
+    if (idCompetitor != null) {
+        competitorViewModel.getPerformanceDetailsByCompetitor(idCompetitor)
+    }*/
 
     Column(
         modifier = modifier
@@ -55,29 +53,11 @@ fun Parkour(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Parkours",
+            text = "Compétiteurs",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
-
-        Button(
-            modifier = Modifier.padding(10.dp),
-            onClick = {},
-            colors = ButtonColors(
-                Color.Black,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White
-            ),
-            enabled = false
-        ){
-            Text(
-                text = "Ajouter un parkour",
-                modifier = Modifier,
-                color = Color.White
-            )
-        }
 
         Column(
             modifier = modifier
@@ -88,7 +68,9 @@ fun Parkour(
         ){
 
             LazyColumn {
-                for (parkour in parkours){
+                //for (competitor in competitorsList){
+                /*
+
                     item{
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
@@ -100,45 +82,34 @@ fun Parkour(
 
                             item{
 
-                                Column {
+                               Column {
                                     Text(
-                                        text = "➣  " + parkour.name,
+                                        text = "➣  " + competitor.first_name + " " + competitor.last_name,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • durée maximale : " + parkour.max_duration,
+                                        text = "        • " + competitor.gender,
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • position : " + parkour.position,
+                                        text = "        • " + competitor.born_at,
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + if (parkour.is_over == 1) {
-                                            "terminé"
-                                        } else {
-                                            "non terminé"
-                                        },
-                                        fontSize = 13.sp,
-                                        color = if (parkour.is_over == 1) {
-                                            Color.Green
-                                        } else {
-                                            Color.Red
-                                        }
+                                        text = "        • " + competitor.email,
+                                        fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = "        • " + competitor.phone,
+                                        fontSize = 13.sp
                                     )
                                 }
                             }
                             item{
                                 Column{
                                     Button(
-                                        onClick = {
-                                            if (parkour.is_over == 0) {
-                                                navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
-                                            } else {
-                                                //classement
-                                            }
-                                        },
+                                        onClick = {},
                                         colors = ButtonColors(
                                             Color.Black,
                                             contentColor = Color.White,
@@ -147,24 +118,16 @@ fun Parkour(
                                         )
                                     ) {
                                         Image(
-                                            imageVector = if (parkour.is_over == 0) {
-                                                ImageVector.vectorResource(R.drawable.baseline_people_alt_24)
-                                            } else {
-                                                ImageVector.vectorResource(R.drawable.baseline_elevator_24)
-                                            },
-                                            contentDescription = if (parkour.is_over == 0) {
-                                                "concurrents"
-                                            } else {
-                                                "podium"
-                                            }
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
+                                            contentDescription = "obstacles"
                                         )
                                     }
                                 }
-                            }
-                        }
+                            }*/
+                        //}
                     }
                 }
             }
         }
-    }
-}
+    /*}
+}*/

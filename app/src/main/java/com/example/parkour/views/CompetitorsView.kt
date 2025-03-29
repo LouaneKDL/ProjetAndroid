@@ -1,5 +1,6 @@
 package com.example.parkour.views
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,13 +33,43 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
+import com.example.parkour.model.Competitors
+import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
-@Composable
-fun Competitors(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, navController: NavController) {
 
-    val competitors by viewModel.competitors.observeAsState(emptyList())
-    viewModel.getData()
+@SuppressLint("ResourceType")
+@Composable
+fun Competitors(
+    modifier: Modifier = Modifier,
+    competitionViewModel: CompetitionViewModel,
+    competitorsViewModel: CompetitorsViewModel,
+    navController: NavController,
+    idCompetition: Int?,
+    idCourse: Int?
+) {
+
+    //competitors of a competition
+    val competitors by competitionViewModel.competitors.observeAsState(emptyList())
+    if (idCompetition != null) {
+        competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
+    }
+
+    //competitors of a course
+    var competitorsList = mutableListOf<Competitors>()
+
+    for (competitor in competitors){
+
+        val courses by competitorsViewModel.courses.observeAsState(emptyList())
+        competitorsViewModel.getCoursesByACompetitor(competitor.id)
+        for (course in courses){
+            if (course.id == idCourse){ //if a course of a competitior is the one wanted, we add the competitor
+                competitorsList.add(competitor)
+                break
+            }
+        }
+
+    }
 
     Column(
         modifier = modifier
@@ -81,25 +112,25 @@ fun Competitors(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, 
                 .background(Color.White)
                 .padding(8.dp)
 
-        ) {
+        ){
 
             LazyColumn {
-                for (competitor in competitors) {
-                    item {
+                for (competitor in competitorsList){
+
+                    item{
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black)
-                                .padding(10.dp),
+                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
 
-                            item {
+                            item{
 
                                 Column {
                                     Text(
-                                        text = "➣  " + competitor.last_name + " " + competitor.first_name,
+                                        text = "➣  " + competitor.first_name + " " + competitor.last_name,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -111,24 +142,18 @@ fun Competitors(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, 
                                         text = "        • " + competitor.born_at,
                                         fontSize = 13.sp
                                     )
+                                    Text(
+                                        text = "        • " + competitor.email,
+                                        fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = "        • " + competitor.phone,
+                                        fontSize = 13.sp
+                                    )
                                 }
                             }
-                            item {
-                                Column {
-                                    Button(
-                                        onClick = {},
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
-                                            contentDescription = "concurrents"
-                                        )
-                                    }
+                            item{
+                                Column{
                                     Button(
                                         onClick = {},
                                         colors = ButtonColors(
@@ -140,7 +165,7 @@ fun Competitors(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, 
                                     ) {
                                         Image(
                                             imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                            contentDescription = "parkours"
+                                            contentDescription = "obstacles"
                                         )
                                     }
                                 }
@@ -150,6 +175,5 @@ fun Competitors(modifier: Modifier = Modifier, viewModel: CompetitorsViewModel, 
                 }
             }
         }
-
     }
 }
