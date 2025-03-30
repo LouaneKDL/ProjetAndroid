@@ -1,6 +1,7 @@
 package com.example.parkour.viewModel
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,41 +24,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.MutableState
 import coil.compose.rememberAsyncImagePainter
-
+import com.example.parkour.R
 
 @Composable
-fun AddObstacleView(modifier: Modifier)  {
-
-    val state = remember {  mutableStateOf(StateRequestAuthorization.UNKNOWN) }
-
-    val launcherState = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            state.value = StateRequestAuthorization.AUTHORIZES
-        } else {
-            state.value = StateRequestAuthorization.REFUSES
-        }
-    }
-    var cliked by remember { mutableStateOf(false) }
-
+fun AddObstacleView(modifier: Modifier) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val launcherImage =
+    val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 imageUri = it
+                Log.i("image", "Selected image URI: $it")
             }
         }
 
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.LightGray),
+        modifier = modifier.fillMaxSize().background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -84,6 +72,7 @@ fun AddObstacleView(modifier: Modifier)  {
                 modifier = Modifier.padding(end = 20.dp)
             )
         }
+        val configuration = LocalConfiguration.current
 
 
         Row(
@@ -100,16 +89,12 @@ fun AddObstacleView(modifier: Modifier)  {
                 )
             )
 
-            Button(onClick = { cliked = true}) {
+            Button(onClick = { launcher.launch("image/*") }) {
                 Text("Sélectionner une image")
-            }
 
-            if (cliked) {
-                Confirmation(state, modifier)
 
             }
         }
-
 
         imageUri?.let { uri ->
             //  Text("oui")
@@ -127,63 +112,5 @@ fun AddObstacleView(modifier: Modifier)  {
     }
 
 
-}
-/*
-@Composable
-fun Confirmation(context: Context, modifier: Modifier = Modifier, launcher: ActivityResultLauncher<String>){
-    Column(modifier = modifier) {
-        Text(
-            text = "Nous avons besoin de ... voulez-vous l'activer?",
-            modifier = modifier.padding(20.dp)
-        )
-        Button(onClick = {
-            launcher.launch("image/*")
-        },
-            modifier = modifier) {
-            Text("Autoriser")
-        }
-        Button(onClick = {
 
-        },
-            modifier = modifier) {
-            Text("Refuser")
-        }
-    }
-}
-*/*/
-@Composable
-fun Confirmation(state: MutableState<StateRequestAuthorization>, modifier: Modifier = Modifier) {
-
-    if (state == StateRequestAuthorization.AUTHORIZES) {
-       Confirmation2()
-    } else {
-        Text("il faut autoriser la caméra")
-    }
-
-}
-
-@Composable
-fun Confirmation2(modifier: Modifier = Modifier) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            imageUri = it
-        }
-    }
-
-    Column(modifier = modifier) {
-        Text(
-            text = "Voulez-vous autoriser la galerie",
-            modifier = modifier.padding(20.dp)
-        )
-        Button(onClick = {
-            launcher.launch("image/*")
-        }, modifier = modifier) {
-            Text("Autoriser")
-        }
-        Button(onClick = {}, modifier = modifier) {
-            Text("Refuser")
-        }
-    }
 }
