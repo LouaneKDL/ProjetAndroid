@@ -2,20 +2,16 @@ package com.example.parkour.views
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
+import kotlinx.coroutines.delay
 
 @SuppressLint("ResourceType")
 @Composable
@@ -36,6 +33,18 @@ fun Obstacles(
     idCompetitor: Int?,
     idCourse: Int?
 ) {
+    var time by remember { mutableStateOf(0L) }
+    var isTimerRunning by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isTimerRunning) {
+        while (isTimerRunning) {
+            val startTime = System.currentTimeMillis()
+            delay(10)
+            val elapsedTime = System.currentTimeMillis() - startTime
+            time += elapsedTime
+        }
+    }
+
 
     val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
     if (idCourse != null) {
@@ -54,49 +63,66 @@ fun Obstacles(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.LightGray),
+            .background(Color(0xFFF5F5F5))
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "${competitor?.first_name ?: ""} ${competitor?.last_name ?: ""}",
-            fontSize = 24.sp,
+            fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            modifier = modifier.padding(10.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
-        Button(onClick = { /* Démarrer le parcours */ }, modifier = modifier.padding(10.dp)) {
-            Text("Démarrer le parcours")
+        Button(
+            onClick = { isTimerRunning = !isTimerRunning },
+            colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(if (isTimerRunning) "Arrêter le parcours" else "Démarrer le parcours", color = Color.White)
         }
 
-        Text(text = "Total time: 00:00", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+        val minutes = (time / 1000) / 60
+        val seconds = (time / 1000) % 60
+        val milliseconds = time % 1000
 
-        LazyColumn {
+        Text(
+            text = String.format("Temps total : %02d:%02d.%03d", minutes, seconds, milliseconds),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
-                Row(
-                    modifier = modifier
-                        .padding(8.dp)
-                        .background(Color.White),
-                    verticalAlignment = Alignment.CenterVertically
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    elevation = CardDefaults.cardElevation(6.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Obstacle: ${obstacle.name}", fontSize = 18.sp)
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text("Temps sur l'obstacle : 00:00", fontSize = 16.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = false, onCheckedChange = {})
-                            Text("Chute")
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("Chute", fontSize = 16.sp)
+                            Spacer(modifier = Modifier.width(20.dp))
                             Checkbox(checked = false, onCheckedChange = {})
-                            Text("À vérifier")
+                            Text("À vérifier", fontSize = 16.sp)
                         }
-                        Text("Temps sur l'obstacle : 0:0", fontSize = 16.sp)
                     }
                 }
             }
         }
 
-        Button(onClick = { /* Obtenir obstacles disponibles */ }, modifier = modifier.padding(10.dp)) {
-            Text("Obstacles disponibles")
+        Button(
+            onClick = { /* Obtenir obstacles disponibles */ },
+            colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Obstacles disponibles", color = Color.White)
         }
     }
 }
