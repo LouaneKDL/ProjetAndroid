@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
                                 competitionViewModel,
                                 competitorsViewModel,
                                 performancesViewModel,
+                                coursesViewModel,
                                 navController,
                                 idCompetition,
                                 idCourse
