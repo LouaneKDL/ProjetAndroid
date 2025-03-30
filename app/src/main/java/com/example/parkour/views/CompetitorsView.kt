@@ -104,6 +104,8 @@ fun Competitors(
         ){
 
             LazyColumn {
+
+                var detailCompetitor : Performances? = null
                 for (competitor in competitorsList){
 
                     item{
@@ -140,7 +142,6 @@ fun Competitors(
                                         fontSize = 13.sp
                                     )
 
-                                    var detailCompetitor : Performances? = null
                                     for (detail in details){
                                         if (detail.course_id == idCourse && detail.competitor_id == competitor.id){
                                             detailCompetitor = detail
@@ -150,13 +151,13 @@ fun Competitors(
                                     if (detailCompetitor != null){
                                         Text(
                                             text = "        • Statut du parkour : " +
-                                                    if (detailCompetitor.status == "over") {
+                                                    if (detailCompetitor!!.status == "over") {
                                                         "terminé"
                                                     }
-                                                    else if (detailCompetitor.status == "to_verify"){
+                                                    else if (detailCompetitor!!.status == "to_verify"){
                                                         "à vérifier"
                                                     }
-                                                    else if (detailCompetitor.status == "to_finish"){
+                                                    else if (detailCompetitor!!.status == "to_finish"){
                                                         "à finir"
                                                     }
                                                     else{
@@ -165,7 +166,7 @@ fun Competitors(
                                             fontSize = 13.sp
                                         )
                                         Text(
-                                            text = "        • Durée totale : " + detailCompetitor.total_time/20/60 + " minutes",
+                                            text = "        • Durée totale : " + detailCompetitor!!.total_time/20/60 + " minutes",
                                             fontSize = 13.sp
                                         )
                                     }
@@ -187,7 +188,7 @@ fun Competitors(
                                 Column{
                                     Button(
                                         onClick = {
-                                            navController.navigate("obstacles_view/${competitor.id}/${idCourse}")
+                                            navController.navigate("obstacles_view/${competitor.id}/${idCourse}/${detailCompetitor?.id}")
                                         },
                                         colors = ButtonColors(
                                             Color.Black,

@@ -6,6 +6,6 @@ object Routes {
     var competitorRegistrationView = "competition_registration_view"
     var parkourView = "parkour_view/{id}"
     var competitorView = "competitor_view/{idCompetition}/{idCourse}"
-    var obstaclesView = "obstacles_view/{idCompetitor}/{idCourse}"
+    var obstaclesView = "obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}"
 
 }

@@ -1,6 +1,8 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,19 +21,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceType")
 @Composable
 fun Obstacles(
     modifier: Modifier = Modifier,
     competitorViewModel: CompetitorsViewModel,
     coursesViewModel: CoursesViewModel,
+    performanceViewModel: PerformancesViewModel,
     navController: NavController,
     idCompetitor: Int?,
-    idCourse: Int?
+    idCourse: Int?,
+    idPerformances: Int?
 ) {
     var time by remember { mutableStateOf(0L) }
     var isTimerRunning by remember { mutableStateOf(false) }
@@ -44,7 +52,6 @@ fun Obstacles(
             time += elapsedTime
         }
     }
-
 
     val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
     if (idCourse != null) {
@@ -67,6 +74,13 @@ fun Obstacles(
         }
     }
 
+    val performance by performanceViewModel.performance.observeAsState()
+    if (idPerformances != null) {
+        LaunchedEffect(idPerformances) {
+            performanceViewModel.getPerformanceById(idPerformances)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -82,7 +96,50 @@ fun Obstacles(
         )
 
         Button(
-            onClick = { isTimerRunning = !isTimerRunning },
+            onClick = {
+
+                isTimerRunning = !isTimerRunning
+
+                /*if (performance == null){
+                    var idPerformances = 9999 // /!\ ID à auto incrémenter
+                    var emptyPerformance: Performances = Performances(
+                        id = idPerformances,
+                        competitor_id = idCompetitor ?: -1,
+                        course_id = idCourse ?: -1,
+                        status = "to_finish",
+                        total_time = 0,
+                        created_at = LocalDate.now().toString(),
+                        updated_at = ""
+                    )
+                    performanceViewModel.postPerformances(emptyPerformance)
+                    performanceViewModel.getPerformanceById(idPerformances)
+                }
+
+                if (isTimerRunning == false){
+
+                    var updatedPerformances: Performances? = performance?.let {
+                        Performances(
+                            id = it.id,
+                            competitor_id = it.competitor_id,
+                            course_id = it.course_id,
+                            status = it.status,
+                            total_time = time.toInt(),
+                            created_at = it.created_at,
+                            updated_at = LocalDate.now().toString()
+                        )
+                    }
+
+                    if (updatedPerformances != null) {
+                        performance?.let {
+                            performanceViewModel.updatePerformance(
+                                id = it.id,
+                                updatedPerformances = updatedPerformances
+                            )
+                        }
+                    }
+                }*/
+
+            },
             colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
             modifier = Modifier.padding(16.dp)
         ) {
@@ -96,7 +153,8 @@ fun Obstacles(
         Text(
             text = String.format("Temps total : %02d:%02d.%03d", minutes, seconds, milliseconds),
             fontSize = 18.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(16.dp)
         )
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
@@ -111,13 +169,16 @@ fun Obstacles(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text("Temps sur l'obstacle : 00:00", fontSize = 16.sp)
+                        Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = false, onCheckedChange = {})
                             Text("Chute", fontSize = 16.sp)
                             Spacer(modifier = Modifier.width(20.dp))
                             Checkbox(checked = false, onCheckedChange = {})
                             Text("À vérifier", fontSize = 16.sp)
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("Complété", fontSize = 16.sp)
                         }
                     }
                 }

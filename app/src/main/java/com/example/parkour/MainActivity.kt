@@ -1,9 +1,11 @@
 package com.example.parkour
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -25,6 +27,7 @@ import com.example.parkour.views.Obstacles
 import com.example.parkour.views.Parkour
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -84,17 +87,20 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("obstacles_view/{idCompetitor}/{idCourse}"){
+                        composable("obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}"){
                             backStackEntry ->
                                 val idCompetitor = backStackEntry.arguments?.getString("idCompetitor")?.toIntOrNull()
                                 val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
+                                val idPerformances = backStackEntry.arguments?.getString("idPerformances")?.toIntOrNull()
                             Obstacles(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
                                 coursesViewModel,
+                                performancesViewModel,
                                 navController,
                                 idCompetitor,
-                                idCourse
+                                idCourse,
+                                idPerformances
                             )
                         }
 
