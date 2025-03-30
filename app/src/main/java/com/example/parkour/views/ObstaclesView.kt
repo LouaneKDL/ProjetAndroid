@@ -1,19 +1,16 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,15 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.parkour.R
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 
@@ -63,81 +56,47 @@ fun Obstacles(
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
-            text = "Obstacles",
-            modifier = modifier.padding(10.dp),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold
+            text = "${competitor?.first_name ?: ""} ${competitor?.last_name ?: ""}",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = modifier.padding(10.dp)
         )
 
-        Column(
-            modifier = modifier
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(Color.White)
-                .padding(8.dp)
+        Button(onClick = { /* Démarrer le parcours */ }, modifier = modifier.padding(10.dp)) {
+            Text("Démarrer le parcours")
+        }
 
-        ){
+        Text(text = "Total time: 00:00", fontSize = 20.sp, fontWeight = FontWeight.Medium)
 
-            Text(
-                text = "Parkour de " + (competitor?.first_name ?: "") + " " + (competitor?.last_name ?: ""),
-                modifier = modifier.padding(10.dp),
-                fontSize = 23.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            LazyColumn {
-                for (obstacle in obstacles){
-
-                    item{
-                        LazyRow(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            item{
-
-                               Column {
-                                    Text(
-                                        text = "➣  " + obstacle.name + " id = " + obstacle.id,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "        • " + obstacle.created_at,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + obstacle.updated_at,
-                                        fontSize = 13.sp
-                                    )
-                                }
-                            }
-                            item{
-                                Column{
-                                    Button(
-                                        onClick = {},
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                            contentDescription = "obstacles"
-                                        )
-                                    }
-                                }
-                            }
+        LazyColumn {
+            items(obstacles.size) { index ->
+                val obstacle = obstacles[index]
+                Row(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .background(Color.White),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Obstacle: ${obstacle.name}", fontSize = 18.sp)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("Chute")
                         }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("À vérifier")
+                        }
+                        Text("Temps sur l'obstacle : 0:0", fontSize = 16.sp)
                     }
                 }
             }
+        }
+
+        Button(onClick = { /* Obtenir obstacles disponibles */ }, modifier = modifier.padding(10.dp)) {
+            Text("Obstacles disponibles")
         }
     }
 }

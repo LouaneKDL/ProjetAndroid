@@ -50,7 +50,7 @@ fun Competitors(
     idCourse: Int?
 ) {
 
-    //competitors of a competition
+
     val competitors by competitionViewModel.competitors.observeAsState(emptyList())
     if (idCompetition != null) {
         LaunchedEffect(idCompetition) {
@@ -58,34 +58,19 @@ fun Competitors(
         }
     }
 
-    //competitors of a course
-    /*var competitorsList = mutableListOf<Competitors>()
-
-    for (competitor in competitors){
-
-        val courses by competitorsViewModel.courses.observeAsState(emptyList())
-        competitorsViewModel.getCoursesByACompetitor(competitor.id)
-        for (course in courses){
-            if (course.id == idCourse){ //if a course of a competitior is the one wanted, we add the competitor
-                competitorsList.add(competitor)
-                break
-            }
-        }
-
-    }*/
     val competitorsList = mutableListOf<Competitors>()
 
-// On crée un cache pour les courses déjà récupérées
+
     val coursesCache = mutableMapOf<Int, List<Courses>>()
 
     for (competitor in competitors) {
-        // On récupère les courses depuis le cache ou on les charge si elles ne sont pas encore là
+
         val courses = coursesCache.getOrPut(competitor.id) {
             competitorsViewModel.getCoursesByACompetitor(competitor.id)
             competitorsViewModel.courses.value ?: emptyList()
         }
 
-        // On vérifie si une des courses correspond
+
         if (courses.any { it.id == idCourse }) {
             competitorsList.add(competitor)
         }
