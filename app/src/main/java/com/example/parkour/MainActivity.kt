@@ -20,6 +20,7 @@ import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
+import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+        val performanceObstaclesViewModel = ViewModelProvider(this)[PerformanceObstaclesViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -97,6 +99,7 @@ class MainActivity : ComponentActivity() {
                                 competitorsViewModel,
                                 coursesViewModel,
                                 performancesViewModel,
+                                performanceObstaclesViewModel,
                                 navController,
                                 idCompetitor,
                                 idCourse,

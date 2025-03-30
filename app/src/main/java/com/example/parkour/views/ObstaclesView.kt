@@ -21,9 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -36,6 +38,7 @@ fun Obstacles(
     competitorViewModel: CompetitorsViewModel,
     coursesViewModel: CoursesViewModel,
     performanceViewModel: PerformancesViewModel,
+    performanceObstaclesViewModel: PerformanceObstaclesViewModel,
     navController: NavController,
     idCompetitor: Int?,
     idCourse: Int?,
@@ -160,6 +163,18 @@ fun Obstacles(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
+
+                val detailsPerformances by performanceObstaclesViewModel.performanceObstacles.observeAsState(emptyList())
+                performanceObstaclesViewModel.getData()
+
+                var detail: Performance_obstacles? = null
+                for (detailsPerf in detailsPerformances){
+                    if (detailsPerf.obstacle_id == obstacle.id){// && detailsPerf.performance_id == performance?.id){
+                        detail = detailsPerf
+                        break
+                    }
+                }
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -171,14 +186,13 @@ fun Obstacles(
                         Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(checked = false, onCheckedChange = {})
+                            if (detail != null) {
+                                Checkbox(checked = detail.has_fell==1, onCheckedChange = {})
+                            }
                             Text("Chute", fontSize = 16.sp)
                             Spacer(modifier = Modifier.width(20.dp))
-                            Checkbox(checked = false, onCheckedChange = {})
+                            Checkbox(checked = detail?.to_verify==1, onCheckedChange = {})
                             Text("À vérifier", fontSize = 16.sp)
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Checkbox(checked = false, onCheckedChange = {})
-                            Text("Complété", fontSize = 16.sp)
                         }
                     }
                 }
