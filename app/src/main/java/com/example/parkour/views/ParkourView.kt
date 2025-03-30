@@ -51,6 +51,11 @@ fun Parkour(
         }
     }
 
+    val competition by viewModel.competition.observeAsState()
+    if (idCompetition != null) {
+        viewModel.getCompetitionById(idCompetition)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -58,7 +63,7 @@ fun Parkour(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Parkours",
+            text = "Parkours de la compétition ${competition?.name}",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold

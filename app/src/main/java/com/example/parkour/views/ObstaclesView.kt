@@ -60,6 +60,13 @@ fun Obstacles(
         }
     }
 
+    val course by coursesViewModel.course.observeAsState()
+    if (idCourse != null) {
+        LaunchedEffect(idCourse) {
+            coursesViewModel.getCourseById(idCourse)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,8 +75,8 @@ fun Obstacles(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "${competitor?.first_name ?: ""} ${competitor?.last_name ?: ""}",
-            fontSize = 28.sp,
+            text = "Performances de ${competitor?.first_name} ${competitor?.last_name} sur le parkour ${course?.name}",
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 10.dp)
         )

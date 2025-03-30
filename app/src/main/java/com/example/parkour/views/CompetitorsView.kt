@@ -35,6 +35,7 @@ import com.example.parkour.model.Courses
 import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 
 
@@ -45,6 +46,7 @@ fun Competitors(
     competitionViewModel: CompetitionViewModel,
     competitorsViewModel: CompetitorsViewModel,
     performancesViewModel: PerformancesViewModel,
+    coursesViewModel: CoursesViewModel,
     navController: NavController,
     idCompetition: Int?,
     idCourse: Int?
@@ -59,10 +61,7 @@ fun Competitors(
     }
 
     val competitorsList = mutableListOf<Competitors>()
-
-
     val coursesCache = mutableMapOf<Int, List<Courses>>()
-
     for (competitor in competitors) {
 
         val courses = coursesCache.getOrPut(competitor.id) {
@@ -70,12 +69,15 @@ fun Competitors(
             competitorsViewModel.courses.value ?: emptyList()
         }
 
-
         if (courses.any { it.id == idCourse }) {
             competitorsList.add(competitor)
         }
     }
 
+    val course by coursesViewModel.course.observeAsState()
+    if (idCourse != null) {
+        coursesViewModel.getCourseById(idCourse)
+    }
 
     val details by performancesViewModel.performances.observeAsState(emptyList())
     performancesViewModel.getData()
@@ -87,7 +89,7 @@ fun Competitors(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Compétiteurs",
+            text = "Compétiteurs du parkour ${course?.name}",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
