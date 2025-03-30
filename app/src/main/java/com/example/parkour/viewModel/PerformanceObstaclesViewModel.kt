@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Performance_obstacles
+import com.example.parkour.model.Performance_obstaclesRequest
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
 
@@ -65,7 +66,7 @@ class PerformanceObstaclesViewModel : ViewModel() {
     }
 
 
-    fun updatePerformanceObstacles(id: Int, updatedPerformances: Performance_obstacles) {
+    fun updatePerformanceObstacles(id: Int, updatedPerformances: Performance_obstaclesRequest) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.putPerformanceObstacles(id, updatedPerformances)

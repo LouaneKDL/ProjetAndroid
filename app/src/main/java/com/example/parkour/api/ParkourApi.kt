@@ -5,7 +5,9 @@ import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performance_obstacles
+import com.example.parkour.model.Performance_obstaclesRequest
 import com.example.parkour.model.Performances
+import com.example.parkour.model.PerformancesRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -136,7 +138,7 @@ interface ParkourApi {
     suspend fun postPerformanceObstacles(@Body performanceObstacles: Performance_obstacles): Response<Performance_obstacles>
 
     @PUT("/api/performance_obstacles/{id}")
-    suspend fun putPerformanceObstacles(@Path("id")id: Int,@Body performanceObstacles: Performance_obstacles): Response<Performance_obstacles>
+    suspend fun putPerformanceObstacles(@Path("id")id: Int,@Body performanceObstacles: Performance_obstaclesRequest): Response<Performance_obstacles>
 
     //PERFORMANCES
 
@@ -150,10 +152,10 @@ interface ParkourApi {
     suspend fun getDetailsByPerformancesById(@Path("id")id:Int): Response<List<Performance_obstacles>>
 
     @POST("/api/performances")
-    suspend fun postPerformances(@Body performances: Performances): Response<Performances>
+    suspend fun postPerformances(@Body performances: PerformancesRequest): Response<Performances>
 
     @PUT("/api/performances/{id}")
-    suspend fun putPerformances(@Path("id")id: Int,@Body performances: Performances): Response<Performances>
+    suspend fun putPerformances(@Path("id")id: Int,@Body performances: PerformancesRequest): Response<Performances>
 
     @DELETE("/api/performances/{id}")
     suspend fun deletePerformance(@Path("id")id: Int): Response<Unit>

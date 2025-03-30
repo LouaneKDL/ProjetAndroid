@@ -2,6 +2,7 @@ package com.example.parkour.views
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,16 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.model.Performance_obstacles
-import com.example.parkour.model.Performances
+import com.example.parkour.model.Performance_obstaclesRequest
+import com.example.parkour.model.PerformancesRequest
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("ResourceType")
+@SuppressLint("ResourceType", "DefaultLocale")
 @Composable
 fun Obstacles(
     modifier: Modifier = Modifier,
@@ -78,8 +79,9 @@ fun Obstacles(
     }
 
     val performance by performanceViewModel.performance.observeAsState()
-    if (idPerformances != null) {
-        LaunchedEffect(idPerformances) {
+
+    LaunchedEffect(idPerformances) {
+        if (idPerformances != null) {
             performanceViewModel.getPerformanceById(idPerformances)
         }
     }
@@ -103,32 +105,25 @@ fun Obstacles(
 
                 isTimerRunning = !isTimerRunning
 
-                if (performance == null){
-                    var idPerformances = 9999 // /!\ ID à auto incrémenter
-                    var emptyPerformance: Performances = Performances(
-                        id = idPerformances,
+                if (performance == null) {
+                    var emptyPerformance: PerformancesRequest = PerformancesRequest(
                         competitor_id = idCompetitor ?: -1,
                         course_id = idCourse ?: -1,
                         status = "to_finish",
                         total_time = 0,
-                        created_at = LocalDate.now().toString(),
-                        updated_at = ""
                     )
                     performanceViewModel.postPerformances(emptyPerformance)
-                    performanceViewModel.getPerformanceById(idPerformances)
+                    //performanceViewModel.getPerformanceById()
                 }
 
-                if (isTimerRunning == false){
+                if (isTimerRunning == false) {
 
-                    var updatedPerformances: Performances? = performance?.let {
-                        Performances(
-                            id = it.id,
+                    var updatedPerformances: PerformancesRequest? = performance?.let {
+                        PerformancesRequest(
                             competitor_id = it.competitor_id,
                             course_id = it.course_id,
                             status = it.status,
                             total_time = time.toInt(),
-                            created_at = it.created_at,
-                            updated_at = LocalDate.now().toString()
                         )
                     }
 
@@ -146,7 +141,10 @@ fun Obstacles(
             colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(if (isTimerRunning) "Arrêter le parcours" else "Démarrer le parcours", color = Color.White)
+            Text(
+                if (isTimerRunning) "Arrêter le parcours" else "Démarrer le parcours",
+                color = Color.White
+            )
         }
 
         val minutes = (time / 1000) / 60
@@ -160,19 +158,24 @@ fun Obstacles(
             modifier = Modifier.padding(16.dp)
         )
 
+        val detailsPerformances by performanceObstaclesViewModel.performanceObstacles.observeAsState(emptyList())
+
+        LaunchedEffect(Unit) {
+            performanceObstaclesViewModel.getData()
+        }
+
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
 
-                val detailsPerformances by performanceObstaclesViewModel.performanceObstacles.observeAsState(emptyList())
-                performanceObstaclesViewModel.getData()
+                val detail = detailsPerformances.find { it.obstacle_id == obstacle.id }
+                print("ijeifjeifj");
 
-                var detail: Performance_obstacles? = null
-                for (detailsPerf in detailsPerformances){
-                    if (detailsPerf.obstacle_id == obstacle.id){// && detailsPerf.performance_id == performance?.id){
-                        detail = detailsPerf
-                        break
-                    }
+                var hasFellChecked by remember(detail?.id) {
+                    mutableStateOf(detail?.has_fell == 1)
+                }
+                var toVerifyChecked by remember(detail?.id) {
+                    mutableStateOf(detail?.to_verify == 1)
                 }
 
                 Card(
@@ -185,14 +188,40 @@ fun Obstacles(
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (detail != null) {
-                                Checkbox(checked = detail.has_fell==1, onCheckedChange = {})
+
+                        if (detail != null) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(
+                                    checked = hasFellChecked,
+                                    onCheckedChange = { checked ->
+                                        hasFellChecked = checked
+                                        val has_fell = if (checked) 1 else 0
+                                        val updatedPerformanceObstacles = Performance_obstaclesRequest(
+                                            has_fell = has_fell,
+                                            to_verify = detail.to_verify,
+                                            time = detail.time
+                                        )
+                                        performanceObstaclesViewModel.updatePerformanceObstacles(detail.id, updatedPerformanceObstacles)
+                                    }
+                                )
+                                Text("Chute", fontSize = 16.sp)
+                                Spacer(modifier = Modifier.width(20.dp))
+
+                                Checkbox(
+                                    checked = toVerifyChecked,
+                                    onCheckedChange = { checked ->
+                                        toVerifyChecked = checked
+                                        val verify = if (checked) 1 else 0
+                                        val updatedPerformanceObstacles = Performance_obstaclesRequest(
+                                            has_fell = detail.has_fell,
+                                            to_verify = verify,
+                                            time = detail.time
+                                        )
+                                        performanceObstaclesViewModel.updatePerformanceObstacles(detail.id, updatedPerformanceObstacles)
+                                    }
+                                )
+                                Text("À vérifier", fontSize = 16.sp)
                             }
-                            Text("Chute", fontSize = 16.sp)
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Checkbox(checked = detail?.to_verify==1, onCheckedChange = {})
-                            Text("À vérifier", fontSize = 16.sp)
                         }
                     }
                 }

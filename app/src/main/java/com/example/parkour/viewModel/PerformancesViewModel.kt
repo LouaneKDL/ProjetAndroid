@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
-import com.example.parkour.model.Competitors
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
+import com.example.parkour.model.PerformancesRequest
 import kotlinx.coroutines.launch
 
 class PerformancesViewModel : ViewModel(){
@@ -66,7 +66,7 @@ class PerformancesViewModel : ViewModel(){
     private val _postPerformances = MutableLiveData<Performances>()
     val postPerformance: LiveData<Performances> = _postPerformances
 
-    fun postPerformances(performances: Performances){
+    fun postPerformances(performances: PerformancesRequest){
         viewModelScope.launch{
             val response = parkourApi.postPerformances(performances)
             if(response.isSuccessful){
@@ -80,7 +80,7 @@ class PerformancesViewModel : ViewModel(){
     }
 
 
-    fun updatePerformance(id: Int, updatedPerformances: Performances) {
+    fun updatePerformance(id: Int, updatedPerformances: PerformancesRequest) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.putPerformances(id, updatedPerformances)
