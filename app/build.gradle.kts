@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.parkour"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -61,6 +61,9 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    implementation("io.coil-kt:coil-compose:2.0.0")
+    //implementation(libs.accompanist.permissions)
 
+}
+dependencies {
+    implementation("io.coil-kt:coil-compose:2.4.0") // Vérifiez la dernière version disponible
 }
