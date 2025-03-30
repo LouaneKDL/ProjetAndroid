@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.androidx.navigation.runtime.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
