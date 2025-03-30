@@ -1,35 +1,24 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,19 +32,29 @@ import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
-import com.example.parkour.viewModel.ObstaclesViewModel
-import com.example.parkour.viewModel.PerformanceObstaclesViewModel
-import com.example.parkour.viewModel.PerformancesViewModel
 
 
 @SuppressLint("ResourceType")
 @Composable
-fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, navController: NavController) {
+fun Parkour(
+    modifier: Modifier = Modifier,
+    viewModel: CompetitionViewModel,
+    navController: NavController,
+    idCompetition: Int?
+) {
 
-    val competitions by viewModel.competitions.observeAsState(emptyList())
-    viewModel.getData()
+    val parkours by viewModel.courses.observeAsState(emptyList())
+    if (idCompetition != null) {
+        LaunchedEffect(idCompetition) {
+            viewModel.getCoursesByCompetitionId(idCompetition)
+        }
+    }
+
+    val competition by viewModel.competition.observeAsState()
+    if (idCompetition != null) {
+        viewModel.getCompetitionById(idCompetition)
+    }
 
     Column(
         modifier = modifier
@@ -64,7 +63,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = "Compétitions",
+            text = "Parkours de la compétition ${competition?.name}",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
@@ -82,7 +81,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
             enabled = false
         ){
             Text(
-                text = "Ajouter une compétition",
+                text = "Ajouter un parkour",
                 modifier = Modifier,
                 color = Color.White
             )
@@ -97,7 +96,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
         ){
 
             LazyColumn {
-                for (compete in competitions){
+                for (parkour in parkours){
                     item{
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
@@ -111,17 +110,30 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
 
                                 Column {
                                     Text(
-                                        text = "➣  " + compete.name,
+                                        text = "➣  " + parkour.name,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + compete.gender,
+                                        text = "        • durée maximale : " + parkour.max_duration/60 + " minutes",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + compete.age_min + " à " + compete.age_max,
+                                        text = "        • position : " + parkour.position,
                                         fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = "        • " + if (parkour.is_over == 1) {
+                                            "terminé"
+                                        } else {
+                                            "non terminé"
+                                        },
+                                        fontSize = 13.sp,
+                                        color = if (parkour.is_over == 1) {
+                                            Color.Green
+                                        } else {
+                                            Color.Red
+                                        }
                                     )
                                 }
                             }
@@ -129,7 +141,11 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                 Column{
                                     Button(
                                         onClick = {
-                                            navController.navigate(Routes.competitorRegistrationView)
+                                            if (parkour.is_over == 0) {
+                                                navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
+                                            } else {
+                                                //classement
+                                            }
                                         },
                                         colors = ButtonColors(
                                             Color.Black,
@@ -139,24 +155,16 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                         )
                                     ) {
                                         Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
-                                            contentDescription = "concurrents"
-                                        )
-                                    }
-                                    Button(
-                                        onClick = {
-                                            navController.navigate("parkour_view/${compete.id}")
-                                        },
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                            contentDescription = "parkours"
+                                            imageVector = if (parkour.is_over == 0) {
+                                                ImageVector.vectorResource(R.drawable.baseline_people_alt_24)
+                                            } else {
+                                                ImageVector.vectorResource(R.drawable.baseline_elevator_24)
+                                            },
+                                            contentDescription = if (parkour.is_over == 0) {
+                                                "concurrents"
+                                            } else {
+                                                "podium"
+                                            }
                                         )
                                     }
                                 }
@@ -166,9 +174,5 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                 }
             }
         }
-
-
-
     }
-
 }
