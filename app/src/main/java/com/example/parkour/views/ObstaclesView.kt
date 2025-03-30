@@ -100,7 +100,7 @@ fun Obstacles(
 
                 isTimerRunning = !isTimerRunning
 
-                /*if (performance == null){
+                if (performance == null){
                     var idPerformances = 9999 // /!\ ID à auto incrémenter
                     var emptyPerformance: Performances = Performances(
                         id = idPerformances,
@@ -137,7 +137,7 @@ fun Obstacles(
                             )
                         }
                     }
-                }*/
+                }
 
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),

@@ -130,7 +130,7 @@ interface ParkourApi {
     suspend fun getPerformanceObstacles(): Response<List<Performance_obstacles>>
 
     @GET("/api/performance_obstacles/{id}")
-    suspend fun getPerformanceObstaclesById(id: Int) : Response<Performance_obstacles>
+    suspend fun getPerformanceObstaclesById(@Path("id")id: Int) : Response<Performance_obstacles>
 
     @POST("/api/performance_obstacles")
     suspend fun postPerformanceObstacles(@Body performanceObstacles: Performance_obstacles): Response<Performance_obstacles>
@@ -144,10 +144,10 @@ interface ParkourApi {
     suspend fun getPerformances(): Response<List<Performances>>
 
     @GET("/api/performances/{id}")
-    suspend fun getPerformancesById(id:Int): Response<Performances>
+    suspend fun getPerformancesById(@Path("id")id:Int): Response<Performances>
 
     @GET("/api/performances/{id}/details")
-    suspend fun getDetailsByPerformancesById(id:Int): Response<List<Performance_obstacles>>
+    suspend fun getDetailsByPerformancesById(@Path("id")id:Int): Response<List<Performance_obstacles>>
 
     @POST("/api/performances")
     suspend fun postPerformances(@Body performances: Performances): Response<Performances>
