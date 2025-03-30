@@ -6,5 +6,5 @@ object Routes {
     var competitorRegistrationView = "competition_registration_view"
     var parkourView = "parkour_view/{id}"
     var competitorView = "competitor_view"
-
+    var addCompetitionView = "add_competition_view"
 }

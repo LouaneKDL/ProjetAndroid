@@ -26,9 +26,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.parkour.viewModel.CompetitionViewModel
 
 @Composable
-fun addCompetitionView(modifier: Modifier) {
+fun AddCompetitionView(modifier: Modifier, viewModel: CompetitionViewModel, navController: NavController) {
     val gender = listOf("Femme", "Homme")
     val yesNo = listOf("Oui", "Non")
 
