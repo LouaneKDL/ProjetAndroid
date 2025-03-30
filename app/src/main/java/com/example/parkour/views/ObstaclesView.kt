@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -43,16 +44,18 @@ fun Obstacles(
     idCourse: Int?
 ) {
 
-    //competitors of a competition
     val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
     if (idCourse != null) {
-        coursesViewModel.getObstaclesByCourseId(idCourse)
+        LaunchedEffect(idCourse) {
+            coursesViewModel.getObstaclesByCourseId(idCourse)
+        }
     }
 
-    //competitor concerned
     val competitor by competitorViewModel.competitor.observeAsState()
     if (idCompetitor != null) {
-        competitorViewModel.getCompetitorById(idCompetitor)
+        LaunchedEffect(idCompetitor) {
+            competitorViewModel.getCompetitorById(idCompetitor)
+        }
     }
 
     Column(

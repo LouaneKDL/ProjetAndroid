@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.model.Competitors
+import com.example.parkour.model.Courses
 import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
@@ -51,11 +53,13 @@ fun Competitors(
     //competitors of a competition
     val competitors by competitionViewModel.competitors.observeAsState(emptyList())
     if (idCompetition != null) {
-        competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
+        LaunchedEffect(idCompetition) {
+            competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
+        }
     }
 
     //competitors of a course
-    var competitorsList = mutableListOf<Competitors>()
+    /*var competitorsList = mutableListOf<Competitors>()
 
     for (competitor in competitors){
 
@@ -68,7 +72,25 @@ fun Competitors(
             }
         }
 
+    }*/
+    val competitorsList = mutableListOf<Competitors>()
+
+// On crée un cache pour les courses déjà récupérées
+    val coursesCache = mutableMapOf<Int, List<Courses>>()
+
+    for (competitor in competitors) {
+        // On récupère les courses depuis le cache ou on les charge si elles ne sont pas encore là
+        val courses = coursesCache.getOrPut(competitor.id) {
+            competitorsViewModel.getCoursesByACompetitor(competitor.id)
+            competitorsViewModel.courses.value ?: emptyList()
+        }
+
+        // On vérifie si une des courses correspond
+        if (courses.any { it.id == idCourse }) {
+            competitorsList.add(competitor)
+        }
     }
+
 
     val details by performancesViewModel.performances.observeAsState(emptyList())
     performancesViewModel.getData()
