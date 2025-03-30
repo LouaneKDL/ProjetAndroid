@@ -1,9 +1,11 @@
 package com.example.parkour
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,6 +19,8 @@ import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
+import com.example.parkour.views.AddCompetition
+import com.example.parkour.views.AddCompetitionView
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
@@ -24,6 +28,7 @@ import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourRegistration
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +45,13 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.competitionView, builder = {
 
+                        composable(Routes.addCompetitionView) {
+                            AddCompetition(
+                                Modifier.padding(innerPadding),
+                                competitionViewModel,
+                                navController
+                            )
+                        }
                         composable(Routes.competitionView){
                             Competition(
                                 modifier = Modifier.padding(innerPadding),

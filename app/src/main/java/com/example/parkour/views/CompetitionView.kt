@@ -72,14 +72,16 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
 
         Button(
             modifier = Modifier.padding(10.dp),
-            onClick = {},
+            onClick = {
+                navController.navigate(Routes.addCompetitionView)
+            },
             colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
             ),
-            enabled = false
+            // enabled = false
         ){
             Text(
                 text = "Ajouter une compétition",
@@ -129,7 +131,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                 Column{
                                     Button(
                                         onClick = {
-                                            navController.navigate(Routes.competitorView)
+                                            navController.navigate(Routes.competitorRegistrationView)
                                         },
                                         colors = ButtonColors(
                                             Color.Black,

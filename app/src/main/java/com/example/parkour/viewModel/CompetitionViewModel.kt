@@ -8,6 +8,7 @@ import com.example.parkour.api.RetrofitInstance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.model.Competition
+import com.example.parkour.model.CompetitionRequest
 import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
@@ -84,7 +85,7 @@ class CompetitionViewModel : ViewModel(){
     private val _competitionPost = MutableLiveData<Competition>()
     val competitionPost: LiveData<Competition> = _competitionPost
 
-    fun postCompetition(competition: Competition){
+    fun postCompetition(competition: CompetitionRequest){
         viewModelScope.launch {
             val response = parkourApi.postCompetitions(competition)
             if(response.isSuccessful){
