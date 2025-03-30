@@ -5,5 +5,5 @@ data class CompetitionRequest (
     val age_min : Int,
     val age_max : Int,
     val gender : String,
-    val has_retry : Int
+    val has_retry : Boolean
 )
