@@ -48,7 +48,6 @@ class ObstaclesViewModel : ViewModel() {
     val postObstacle: LiveData<Obstacles> = _postObstacle
 
     fun postObstacle(obstacles: Obstacles){
-        Log.d("DEBUG", "PostObstacle: ${obstacles.name} - ${obstacles.picture}")
         viewModelScope.launch{
             val response = parkourApi.postObstacle(obstacles)
             if(response.isSuccessful){

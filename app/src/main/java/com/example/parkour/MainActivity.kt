@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
                        composable(Routes.obstaclesView) {
                             AddObstacle(
-                                modifier = Modifier.padding(innerPadding),
+
                                 obstaclesViewModel,
                                 navController
                             )
