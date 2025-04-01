@@ -8,24 +8,30 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.parkour.model.Obstacles
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.AddCompetition
+import com.example.parkour.views.AddObstacle
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
 import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourRegistration
 import com.example.parkour.views.PotentialCompetitorRegistration
+import com.example.parkour.views.Obstacles
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -37,6 +43,7 @@ class MainActivity : ComponentActivity() {
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+        val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -57,6 +64,30 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
                                 navController
+                            )
+                        }
+
+                        composable(Routes.addObstacle) {
+                            AddObstacle(
+                                obstaclesViewModel,
+                                navController
+                            )
+                        }
+
+                        composable("obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}"){
+                                backStackEntry ->
+                            val idCompetitor = backStackEntry.arguments?.getString("idCompetitor")?.toIntOrNull()
+                            val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
+                            val idPerformances = backStackEntry.arguments?.getString("idPerformances")?.toIntOrNull()
+                            Obstacles(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                coursesViewModel,
+                                performancesViewModel,
+                                navController,
+                                idCompetitor,
+                                idCourse,
+                                idPerformances
                             )
                         }
 
@@ -100,6 +131,8 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
                                 competitorsViewModel,
+                                performancesViewModel,
+                                coursesViewModel,
                                 navController,
                                 idCompetition,
                                 idCourse

@@ -18,10 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
-import com.example.parkour.Routes
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
+import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
 
 
 @SuppressLint("ResourceType")
@@ -46,72 +45,55 @@ fun Competitors(
     modifier: Modifier = Modifier,
     competitionViewModel: CompetitionViewModel,
     competitorsViewModel: CompetitorsViewModel,
+    performancesViewModel: PerformancesViewModel,
+    coursesViewModel: CoursesViewModel,
     navController: NavController,
     idCompetition: Int?,
     idCourse: Int?
 ) {
 
-    //competitors of a competition
+
     val competitors by competitionViewModel.competitors.observeAsState(emptyList())
-
-
-    LaunchedEffect(idCompetition) {
-        if (idCompetition != null) {
+    if (idCompetition != null) {
+        LaunchedEffect(idCompetition) {
             competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
         }
     }
 
-    //competitors of a course
-    var competitorsList = mutableListOf<Competitors>()
+    val competitorsList = mutableListOf<Competitors>()
     val coursesCache = mutableMapOf<Int, List<Courses>>()
+    for (competitor in competitors) {
 
-    for (competitor in competitors){
-
-        val courses = coursesCache.getOrPut(competitor.id){
+        val courses = coursesCache.getOrPut(competitor.id) {
             competitorsViewModel.getCoursesByACompetitor(competitor.id)
             competitorsViewModel.courses.value ?: emptyList()
         }
 
-        if(courses.any{it.id == idCourse}){
+        if (courses.any { it.id == idCourse }) {
             competitorsList.add(competitor)
         }
-
     }
+
+    val course by coursesViewModel.course.observeAsState()
+    if (idCourse != null) {
+        coursesViewModel.getCourseById(idCourse)
+    }
+
+    val details by performancesViewModel.performances.observeAsState(emptyList())
+    performancesViewModel.getData()
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-
+    ){
         Text(
-            text = "Concurrents",
+            text = "Compétiteurs du parkour ${course?.name}",
             modifier = modifier.padding(10.dp),
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
-
-        Button(
-            modifier = Modifier.padding(10.dp),
-            onClick = {
-                navController.navigate("add_potential_competitor/${idCompetition}")
-            },
-            colors = ButtonColors(
-                Color.Black,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White
-            ),
-            enabled = true
-        ){
-            Text(
-                text = "Ajouter un compétiteur",
-                modifier = Modifier,
-                color = Color.White
-            )
-        }
 
         Column(
             modifier = modifier
@@ -122,6 +104,8 @@ fun Competitors(
         ){
 
             LazyColumn {
+
+                var detailCompetitor : Performances? = null
                 for (competitor in competitorsList){
 
                     item{
@@ -157,12 +141,55 @@ fun Competitors(
                                         text = "        • " + competitor.phone,
                                         fontSize = 13.sp
                                     )
+
+                                    for (detail in details){
+                                        if (detail.course_id == idCourse && detail.competitor_id == competitor.id){
+                                            detailCompetitor = detail
+                                        }
+                                    }
+
+                                    if (detailCompetitor != null){
+                                        Text(
+                                            text = "        • Statut du parkour : " +
+                                                    if (detailCompetitor!!.status == "over") {
+                                                        "terminé"
+                                                    }
+                                                    else if (detailCompetitor!!.status == "to_verify"){
+                                                        "à vérifier"
+                                                    }
+                                                    else if (detailCompetitor!!.status == "to_finish"){
+                                                        "à finir"
+                                                    }
+                                                    else{
+                                                        "défection"
+                                                    },
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • Durée totale : " + detailCompetitor!!.total_time/20/60 + " minutes",
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                    else{
+                                        Text(
+                                            text = "        • Statut du parkour : non commencé",
+                                            fontSize = 13.sp
+                                        )
+                                        Text(
+                                            text = "        • Durée totale : non commencé",
+                                            fontSize = 13.sp
+                                        )
+                                    }
+
+
                                 }
                             }
                             item{
                                 Column{
                                     Button(
-                                        onClick = {},
+                                        onClick = {
+                                            navController.navigate("obstacles_view/${competitor.id}/${idCourse}/${detailCompetitor?.id}")
+                                        },
                                         colors = ButtonColors(
                                             Color.Black,
                                             contentColor = Color.White,

@@ -1,133 +1,199 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.parkour.R
+import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitorsViewModel
+import com.example.parkour.viewModel.CoursesViewModel
+import com.example.parkour.viewModel.PerformancesViewModel
+import kotlinx.coroutines.delay
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceType")
 @Composable
 fun Obstacles(
     modifier: Modifier = Modifier,
     competitorViewModel: CompetitorsViewModel,
+    coursesViewModel: CoursesViewModel,
+    performanceViewModel: PerformancesViewModel,
     navController: NavController,
-    idCompetitor: Int?
+    idCompetitor: Int?,
+    idCourse: Int?,
+    idPerformances: Int?
 ) {
+    var time by remember { mutableStateOf(0L) }
+    var isTimerRunning by remember { mutableStateOf(false) }
 
-    //competitors of a competition
-   /* val detailsPerformances by competitorViewModel.detailPerformances.observeAsState(emptyList())
+    LaunchedEffect(isTimerRunning) {
+        while (isTimerRunning) {
+            val startTime = System.currentTimeMillis()
+            delay(10)
+            val elapsedTime = System.currentTimeMillis() - startTime
+            time += elapsedTime
+        }
+    }
+
+    val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
+    if (idCourse != null) {
+        LaunchedEffect(idCourse) {
+            coursesViewModel.getObstaclesByCourseId(idCourse)
+        }
+    }
+
+    val competitor by competitorViewModel.competitor.observeAsState()
     if (idCompetitor != null) {
-        competitorViewModel.getPerformanceDetailsByCompetitor(idCompetitor)
-    }*/
+        LaunchedEffect(idCompetitor) {
+            competitorViewModel.getCompetitorById(idCompetitor)
+        }
+    }
+
+    val course by coursesViewModel.course.observeAsState()
+    if (idCourse != null) {
+        LaunchedEffect(idCourse) {
+            coursesViewModel.getCourseById(idCourse)
+        }
+    }
+
+    val performance by performanceViewModel.performance.observeAsState()
+    if (idPerformances != null) {
+        LaunchedEffect(idPerformances) {
+            performanceViewModel.getPerformanceById(idPerformances)
+        }
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.LightGray),
+            .background(Color(0xFFF5F5F5))
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
-            text = "Compétiteurs",
-            modifier = modifier.padding(10.dp),
-            fontSize = 23.sp,
-            fontWeight = FontWeight.Bold
+            text = "Performances de ${competitor?.first_name} ${competitor?.last_name} sur le parkour ${course?.name}",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
-        Column(
-            modifier = modifier
-                .clip(shape = RoundedCornerShape(8.dp))
-                .background(Color.White)
-                .padding(8.dp)
+        Button(
+            onClick = {
 
-        ){
+                isTimerRunning = !isTimerRunning
 
-            LazyColumn {
-                //for (competitor in competitorsList){
-                /*
+                if (performance == null){
+                    var idPerformances = 9999 // /!\ ID à auto incrémenter
+                    var emptyPerformance: Performances = Performances(
+                        id = idPerformances,
+                        competitor_id = idCompetitor ?: -1,
+                        course_id = idCourse ?: -1,
+                        status = "to_finish",
+                        total_time = 0,
+                        created_at = LocalDate.now().toString(),
+                        updated_at = ""
+                    )
+                    performanceViewModel.postPerformances(emptyPerformance)
+                    performanceViewModel.getPerformanceById(idPerformances)
+                }
 
-                    item{
-                        LazyRow(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                if (isTimerRunning == false){
 
-                            item{
+                    var updatedPerformances: Performances? = performance?.let {
+                        Performances(
+                            id = it.id,
+                            competitor_id = it.competitor_id,
+                            course_id = it.course_id,
+                            status = it.status,
+                            total_time = time.toInt(),
+                            created_at = it.created_at,
+                            updated_at = LocalDate.now().toString()
+                        )
+                    }
 
-                               Column {
-                                    Text(
-                                        text = "➣  " + competitor.first_name + " " + competitor.last_name,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.gender,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.born_at,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.email,
-                                        fontSize = 13.sp
-                                    )
-                                    Text(
-                                        text = "        • " + competitor.phone,
-                                        fontSize = 13.sp
-                                    )
-                                }
-                            }
-                            item{
-                                Column{
-                                    Button(
-                                        onClick = {},
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_info_24),
-                                            contentDescription = "obstacles"
-                                        )
-                                    }
-                                }
-                            }*/
-                        //}
+                    if (updatedPerformances != null) {
+                        performance?.let {
+                            performanceViewModel.updatePerformance(
+                                id = it.id,
+                                updatedPerformances = updatedPerformances
+                            )
+                        }
+                    }
+                }
+
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(if (isTimerRunning) "Arrêter le parcours" else "Démarrer le parcours", color = Color.White)
+        }
+
+        val minutes = (time / 1000) / 60
+        val seconds = (time / 1000) % 60
+        val milliseconds = time % 1000
+
+        Text(
+            text = String.format("Temps total : %02d:%02d.%03d", minutes, seconds, milliseconds),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(obstacles.size) { index ->
+                val obstacle = obstacles[index]
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = CardDefaults.cardColors(Color.White),
+                    elevation = CardDefaults.cardElevation(6.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("Chute", fontSize = 16.sp)
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("À vérifier", fontSize = 16.sp)
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Checkbox(checked = false, onCheckedChange = {})
+                            Text("Complété", fontSize = 16.sp)
+                        }
                     }
                 }
             }
         }
-    /*}
-}*/
+
+        Button(
+            onClick = { /* Obtenir obstacles disponibles */ },
+            colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Obstacles disponibles", color = Color.White)
+        }
+    }
+}
