@@ -203,11 +203,11 @@ fun Obstacles(
 
                         for (detailsPerf in detailsPerformances){
 
-                            Log.i("ICIIII","ON A TROUVE PERFS ${obstacle.id} ${performance!!.id} $detailsPerformances")
+                            Log.i("ICIIII","ON A TROUVE PERFS ${obstacle.obstacle_id} ${performance!!.id} $detailsPerformances")
 
-                            Log.i("ICIIII","Boolean  ${detailsPerf.obstacle_id == obstacle.id}")
+                            Log.i("ICIIII","Boolean  ${detailsPerf.obstacle_id == obstacle.obstacle_id}")
 
-                            if (detailsPerf.obstacle_id == obstacle.id){
+                            if (detailsPerf.obstacle_id == obstacle.obstacle_id){
                                 detail = detailsPerf
                                 Log.i("ICIIII","ON A TROUVE DETAILS $detail ${performance!!.id} $detailsPerformances ${obstacle.id}")
                                 isObstacleDataReady = true
@@ -237,7 +237,7 @@ fun Obstacles(
                         Column(modifier = Modifier.padding(16.dp)) {
 
                             Text(
-                                "Obstacle: ${obstacle.name}",
+                                "Obstacle: ${obstacle.obstacle_name}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -307,7 +307,7 @@ fun Obstacles(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                "Obstacle: ${obstacle.name}",
+                                "Obstacle: ${obstacle.obstacle_name}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -341,7 +341,7 @@ fun Obstacles(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                "Chargement des données pour ${obstacle.name}...",
+                                "Chargement des données pour ${obstacle.obstacle_name}...",
                                 fontSize = 16.sp
                             )
                             CircularProgressIndicator(
