@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
 import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
+import com.example.parkour.model.ObstacleCourse
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
@@ -32,8 +33,8 @@ class CoursesViewModel : ViewModel() {
         }
     }
 
-    private val _obstacles = MutableLiveData<List<Obstacles>>()
-    val obstacles: LiveData<List<Obstacles>> = _obstacles
+    private val _obstacles = MutableLiveData<List<ObstacleCourse>>()
+    val obstacles: LiveData<List<ObstacleCourse>> = _obstacles
 
     fun getObstaclesByCourseId(id:Int){
         viewModelScope.launch {

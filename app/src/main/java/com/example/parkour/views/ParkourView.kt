@@ -159,6 +159,31 @@ fun Parkour(
                                             }
                                         )
                                     }
+
+                                    Button(
+                                        onClick = {
+                                            navController.navigate("obstacle_of_the_parkour_view/${parkour.id}")
+                                        },
+                                        colors = ButtonColors(
+                                            Color.Black,
+                                            contentColor = Color.White,
+                                            disabledContainerColor = Color.Gray,
+                                            disabledContentColor = Color.White
+                                        )
+                                    ) {
+                                        Image(
+                                            imageVector = if (parkour.is_over == 0) {
+                                                ImageVector.vectorResource(R.drawable.baseline_info_24)
+                                            } else {
+                                                ImageVector.vectorResource(R.drawable.baseline_keyboard_backspace_24)
+                                            },
+                                            contentDescription = if (parkour.is_over == 0) {
+                                                "concurrents"
+                                            } else {
+                                                "podium"
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }

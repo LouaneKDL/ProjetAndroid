@@ -6,6 +6,7 @@ import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
+import com.example.parkour.model.ObstacleCourse
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
@@ -84,7 +85,7 @@ interface ParkourApi {
     suspend fun getCourses(): Response<List<Courses>>
 
     @GET("/api/courses/{id}/obstacles")
-    suspend fun getObstaclesByCourseId(@Path("id")id: Int) : Response<List<Obstacles>>
+    suspend fun getObstaclesByCourseId(@Path("id")id: Int) : Response<List<ObstacleCourse>>
 
     @GET("/api/courses/{id}/performances")
     suspend fun getPerformancesByCourseId(@Path("id")id: Int) : Response<List<Performances>>
