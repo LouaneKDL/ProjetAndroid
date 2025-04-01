@@ -20,7 +20,6 @@ import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.AddCompetition
-import com.example.parkour.views.AddCompetitionView
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
