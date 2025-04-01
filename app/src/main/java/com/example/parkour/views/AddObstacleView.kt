@@ -34,13 +34,15 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
     var obstacleName by rememberSaveable { mutableStateOf("") }
     var errorMessage by rememberSaveable { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var validateMessage by remember { mutableStateOf(false) }
     val obstacles by viewModel.obstacles.observeAsState(emptyList())
     viewModel.getData()
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-        uri?.let { Log.i("Image", "Selected image URI: $it") }
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUri = uri
+            uri?.let { Log.i("Image", "Selected image URI: $it") }
+        }
 
     Column(
         modifier = Modifier
@@ -88,6 +90,7 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
 
         Button(
             onClick = {
+                validateMessage = true
                 if (obstacleName.isNotEmpty()) {
                     viewModel.postObstacle(Obstacles(id = 1, name = obstacleName))
                 } else {
@@ -109,23 +112,32 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
             )
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(top = 16.dp)
-        ) {
-            items(obstacles) { obstacle ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-                        .padding(10.dp)
-                ) {
-                    Text(
-                        text = "➣ ${obstacle.name}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+        if (validateMessage) {
+            Text(
+                text = "L'obstacle a bien été créé",
+                color = Color.Green,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(top = 16.dp)
+            ) {
+                items(obstacles) { obstacle ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                            .padding(10.dp)
+                    ) {
+                        Text(
+                            text = "➣ ${obstacle.name}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
-    }
 }
