@@ -114,8 +114,8 @@ fun Parkour(
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
-                                    Text(
-                                        text = "        • durée maximale : " + parkour.max_duration/60 + " minutes",
+                                    Text(//((detailCompetitor.total_time*10).toLong()/1000)/60 + ":" + ((detailCompetitor.total_time*10).toLong()/1000)%60
+                                        text = "        • durée maximale : " + ((parkour.max_duration).toLong())/60 + " minutes",
                                         fontSize = 13.sp
                                     )
                                     Text(

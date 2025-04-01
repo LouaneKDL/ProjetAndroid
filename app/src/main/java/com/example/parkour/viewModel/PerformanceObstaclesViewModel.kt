@@ -24,7 +24,7 @@ class PerformanceObstaclesViewModel : ViewModel() {
             val response = parkourApi.getPerformanceObstacles()
             if(response.isSuccessful){
                 _performanceObstacles.postValue(response.body())
-                Log.i("Reponse :",response.body().toString())
+                Log.i("Performance Obstacles :",response.body().toString())
             }
             else{
                 Log.i("Error :", response.message())

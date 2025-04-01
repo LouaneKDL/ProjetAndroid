@@ -71,6 +71,7 @@ class PerformancesViewModel : ViewModel(){
             val response = parkourApi.postPerformances(performances)
             if(response.isSuccessful){
                 _postPerformances.postValue(response.body())
+                //Log.i("Success", "Parcours AJOUT2 : ${response.body()}")
                 Log.i("Reponse :",response.body().toString())
             }
             else{
@@ -85,7 +86,7 @@ class PerformancesViewModel : ViewModel(){
             try {
                 val response = parkourApi.putPerformances(id, updatedPerformances)
                 if (response.isSuccessful) {
-                    Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                    Log.i("Success", "Performances mises à jour : ${response.body()}")
                 } else {
                     Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
                 }

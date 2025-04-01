@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,6 +31,8 @@ import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceType", "DefaultLocale")
@@ -45,17 +48,8 @@ fun Obstacles(
     idCourse: Int?,
     idPerformances: Int?
 ) {
-    var time by remember { mutableStateOf(0L) }
-    var isTimerRunning by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isTimerRunning) {
-        while (isTimerRunning) {
-            val startTime = System.currentTimeMillis()
-            delay(10)
-            val elapsedTime = System.currentTimeMillis() - startTime
-            time += elapsedTime
-        }
-    }
+    Log.i("ICIIII","DANS OBSTACLE VIEWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW ${idCompetitor}   ${idCourse}   ${idPerformances}   ${idPerformances}")
 
     val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
     if (idCourse != null) {
@@ -86,6 +80,33 @@ fun Obstacles(
         }
     }
 
+    var time by remember { mutableLongStateOf(0L) }
+    var isTimerRunning by remember { mutableStateOf(false) }
+
+    LaunchedEffect(performance) {
+        if (performance != null) {
+            time = performance!!.total_time.times(10).toLong() ?: 0L
+        }
+    }
+
+    var isDataLoaded by remember { mutableStateOf(false) }
+    val detailsPerformances by performanceViewModel.details.observeAsState(emptyList())
+    LaunchedEffect(idPerformances) {
+        if (idPerformances != null) {
+            performanceViewModel.getPerformanceDetailsById(idPerformances)
+        }
+        isDataLoaded = true
+    }
+
+    LaunchedEffect(isTimerRunning) {
+        while (isTimerRunning) {
+            val startTime = System.currentTimeMillis()
+            delay(10)
+            val elapsedTime = System.currentTimeMillis() - startTime
+            time += elapsedTime
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -102,11 +123,11 @@ fun Obstacles(
 
         Button(
             onClick = {
-
+                Log.i("ICIIII","LE BOUTON A ETE PRESSEEEEEEEEE ${idCompetitor}   ${idCourse}   ${idPerformances}   ${idPerformances}")
                 isTimerRunning = !isTimerRunning
 
                 if (performance == null) {
-                    var emptyPerformance: PerformancesRequest = PerformancesRequest(
+                    val emptyPerformance: PerformancesRequest = PerformancesRequest(
                         competitor_id = idCompetitor ?: -1,
                         course_id = idCourse ?: -1,
                         status = "to_finish",
@@ -116,23 +137,25 @@ fun Obstacles(
                     //performanceViewModel.getPerformanceById()
                 }
 
-                if (isTimerRunning == false) {
+                if (!isTimerRunning) {
 
-                    var updatedPerformances: PerformancesRequest? = performance?.let {
+                    val updatedPerformances: PerformancesRequest? = performance?.let {
                         PerformancesRequest(
                             competitor_id = it.competitor_id,
                             course_id = it.course_id,
                             status = it.status,
-                            total_time = time.toInt(),
+                            total_time = (time/100).toInt(),
                         )
                     }
 
                     if (updatedPerformances != null) {
                         performance?.let {
+                            Log.i("ICIIII","L'ID APRES CREATION EST ${it.id}")
                             performanceViewModel.updatePerformance(
                                 id = it.id,
                                 updatedPerformances = updatedPerformances
                             )
+                            performanceViewModel.getPerformanceById(it.id)
                         }
                     }
                 }
@@ -147,61 +170,105 @@ fun Obstacles(
             )
         }
 
+        Log.i("ICIIII","L'ID APRES LA MAJ EST ${performance?.id} ${performance?.total_time}")
+
         val minutes = (time / 1000) / 60
         val seconds = (time / 1000) % 60
         val milliseconds = time % 1000
 
         Text(
-            text = String.format("Temps total : %02d:%02d.%03d", minutes, seconds, milliseconds),
+            text = String.format("Temps total : %02d:%02d.%01d", minutes, seconds, milliseconds),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(16.dp)
         )
 
-        val detailsPerformances by performanceObstaclesViewModel.performanceObstacles.observeAsState(emptyList())
 
-        LaunchedEffect(Unit) {
-            performanceObstaclesViewModel.getData()
-        }
+
+
 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
+
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
 
-                val detail = detailsPerformances.find { it.obstacle_id == obstacle.id }
-                print("ijeifjeifj");
 
-                var hasFellChecked by remember(detail?.id) {
-                    mutableStateOf(detail?.has_fell == 1)
+
+                var detail by remember { mutableStateOf<Performance_obstacles?>(null) }
+
+                var isObstacleDataReady by remember { mutableStateOf(false) }
+
+                LaunchedEffect(performance, detailsPerformances, obstacle, isDataLoaded) {
+                    if (performance != null && detailsPerformances.isNotEmpty()) {
+
+                        for (detailsPerf in detailsPerformances){
+
+                            Log.i("ICIIII","ON A TROUVE PERFS ${obstacle.id} ${performance!!.id} $detailsPerformances")
+
+                            Log.i("ICIIII","Boolean  ${detailsPerf.obstacle_id == obstacle.id}")
+
+                            if (detailsPerf.obstacle_id == obstacle.id){
+                                detail = detailsPerf
+                                Log.i("ICIIII","ON A TROUVE DETAILS $detail ${performance!!.id} $detailsPerformances ${obstacle.id}")
+                                isObstacleDataReady = true
+                            }
+                        }
+
+                    }
                 }
-                var toVerifyChecked by remember(detail?.id) {
-                    mutableStateOf(detail?.to_verify == 1)
-                }
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    colors = CardDefaults.cardColors(Color.White),
-                    elevation = CardDefaults.cardElevation(6.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
+                ///////////////////////////
 
-                        if (detail != null) {
+                if (detail != null && isObstacleDataReady) {
+                    var hasFellChecked by remember(detail?.id) {
+                        mutableStateOf(detail?.has_fell == 1)
+                    }
+                    var toVerifyChecked by remember(detail?.id) {
+                        mutableStateOf(detail?.to_verify == 1)
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        colors = CardDefaults.cardColors(Color.White),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+
+                            Text(
+                                "Obstacle: ${obstacle.name}",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
+
+                            Button(
+                                onClick = { /* valider l'obstacle */ },
+                                colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text("Valider l'obstacle", color = Color.White)
+                            }
+
+
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
                                     checked = hasFellChecked,
                                     onCheckedChange = { checked ->
                                         hasFellChecked = checked
                                         val has_fell = if (checked) 1 else 0
-                                        val updatedPerformanceObstacles = Performance_obstaclesRequest(
-                                            has_fell = has_fell,
-                                            to_verify = detail.to_verify,
-                                            time = detail.time
+                                        val updatedPerformanceObstacles =
+                                            Performance_obstaclesRequest(
+                                                has_fell = has_fell,
+                                                to_verify = detail!!.to_verify,
+                                                time = detail!!.time
+                                            )
+                                        performanceObstaclesViewModel.updatePerformanceObstacles(
+                                            detail!!.id,
+                                            updatedPerformanceObstacles
                                         )
-                                        performanceObstaclesViewModel.updatePerformanceObstacles(detail.id, updatedPerformanceObstacles)
                                     }
                                 )
                                 Text("Chute", fontSize = 16.sp)
@@ -212,28 +279,87 @@ fun Obstacles(
                                     onCheckedChange = { checked ->
                                         toVerifyChecked = checked
                                         val verify = if (checked) 1 else 0
-                                        val updatedPerformanceObstacles = Performance_obstaclesRequest(
-                                            has_fell = detail.has_fell,
-                                            to_verify = verify,
-                                            time = detail.time
+                                        val updatedPerformanceObstacles =
+                                            Performance_obstaclesRequest(
+                                                has_fell = detail!!.has_fell,
+                                                to_verify = verify,
+                                                time = detail!!.time
+                                            )
+                                        performanceObstaclesViewModel.updatePerformanceObstacles(
+                                            detail!!.id,
+                                            updatedPerformanceObstacles
                                         )
-                                        performanceObstaclesViewModel.updatePerformanceObstacles(detail.id, updatedPerformanceObstacles)
                                     }
                                 )
                                 Text("À vérifier", fontSize = 16.sp)
                             }
                         }
                     }
+
+                } else if (isDataLoaded) {
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        colors = CardDefaults.cardColors(Color.White),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                "Obstacle: ${obstacle.name}",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                "Aucune donnée de performance disponible pour cet obstacle",
+                                fontSize = 16.sp
+                            )
+
+                            Button(
+                                onClick = { /* créer une performance_obstacle */ },
+                                colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text("Commencer à évaluer", color = Color.White)
+                            }
+
+                        }
+                    }
+                } else {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        colors = CardDefaults.cardColors(Color.White),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Chargement des données pour ${obstacle.name}...",
+                                fontSize = 16.sp
+                            )
+                            CircularProgressIndicator(
+                                modifier = Modifier.padding(8.dp),
+                                color = Color(0xFF6200EE)
+                            )
+                        }
+
+                    }
                 }
             }
-        }
-
-        Button(
-            onClick = { /* Obtenir obstacles disponibles */ },
-            colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Obstacles disponibles", color = Color.White)
+            /* PAS ICI Button(
+                onClick = { /* Obtenir obstacles disponibles */ },
+                colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Obstacles disponibles", color = Color.White)
+            }*/
         }
     }
 }

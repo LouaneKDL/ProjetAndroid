@@ -39,7 +39,7 @@ class CoursesViewModel : ViewModel() {
             val response = parkourApi.getObstaclesByCourseId(id)
             if(response.isSuccessful){
                 _obstacles.postValue(response.body())
-                Log.i("Reponse :",response.body().toString())
+                Log.i("Obstacles :",response.body().toString())
             }
             else{
                 Log.i("Error :", response.message())
