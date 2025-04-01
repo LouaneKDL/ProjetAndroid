@@ -110,6 +110,7 @@ class CompetitionViewModel : ViewModel(){
             if(response.isSuccessful){
                 _competitorPost.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
+                getInscriptionsByCompetitionId(competitionId)
             }
             else{
                 Log.i("Error :", response.message())
