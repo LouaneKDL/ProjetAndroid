@@ -89,7 +89,7 @@ fun Competitors(
         Button(
             modifier = Modifier.padding(10.dp),
             onClick = {
-                navController.navigate("competition_registration_view")
+                navController.navigate("add_potential_competitor/${idCompetition}")
             },
             colors = ButtonColors(
                 Color.Black,

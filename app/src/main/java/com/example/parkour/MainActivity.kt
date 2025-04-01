@@ -25,6 +25,7 @@ import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
 import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourRegistration
+import com.example.parkour.views.PotentialCompetitorRegistration
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -102,6 +103,18 @@ class MainActivity : ComponentActivity() {
                                 navController,
                                 idCompetition,
                                 idCourse
+                            )
+                        }
+
+                        composable("add_potential_competitor/{id}"){
+                                backStackEntry ->
+                            val idCompetition = backStackEntry.arguments?.getString("id").orEmpty().toInt()
+                            PotentialCompetitorRegistration(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                navController,
+                                competitionViewModel,
+                                idCompetition
                             )
                         }
 

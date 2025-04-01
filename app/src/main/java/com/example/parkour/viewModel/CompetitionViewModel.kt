@@ -101,7 +101,7 @@ class CompetitionViewModel : ViewModel(){
     private val _competitorPost = MutableLiveData<Competitors>()
     val competitorPost: LiveData<Competitors> = _competitorPost
 
-    fun postCompetitorToCompetitionById(competitionId: Int, competitors: CompetitorRequest){
+    fun postCompetitorToCompetitionById(competitionId: Int, competitors: Int){
         viewModelScope.launch {
             val response = parkourApi.postCompetitorsToCompetitionById(competitionId,competitors)
             if(response.isSuccessful){
