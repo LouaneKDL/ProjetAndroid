@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -34,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.model.Competitors
+import com.example.parkour.model.Courses
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
@@ -51,22 +53,27 @@ fun Competitors(
 
     //competitors of a competition
     val competitors by competitionViewModel.competitors.observeAsState(emptyList())
-    if (idCompetition != null) {
-        competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
+
+
+    LaunchedEffect(idCompetition) {
+        if (idCompetition != null) {
+            competitionViewModel.getInscriptionsByCompetitionId(idCompetition)
+        }
     }
 
     //competitors of a course
     var competitorsList = mutableListOf<Competitors>()
+    val coursesCache = mutableMapOf<Int, List<Courses>>()
 
     for (competitor in competitors){
 
-        val courses by competitorsViewModel.courses.observeAsState(emptyList())
-        competitorsViewModel.getCoursesByACompetitor(competitor.id)
-        for (course in courses){
-            if (course.id == idCourse){ //if a course of a competitior is the one wanted, we add the competitor
-                competitorsList.add(competitor)
-                break
-            }
+        val courses = coursesCache.getOrPut(competitor.id){
+            competitorsViewModel.getCoursesByACompetitor(competitor.id)
+            competitorsViewModel.courses.value ?: emptyList()
+        }
+
+        if(courses.any{it.id == idCourse}){
+            competitorsList.add(competitor)
         }
 
     }

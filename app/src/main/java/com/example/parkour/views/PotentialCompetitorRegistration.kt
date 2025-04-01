@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
+import com.example.parkour.api.ParkourApi
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
@@ -105,7 +106,8 @@ fun PotentialCompetitorRegistration(
         )
         Button(
             onClick = {
-                navController.navigate("parkour_view/${competitionID}}")
+                navController.navigate("parkour_view/${competitionID}")
+
             }, colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
@@ -186,7 +188,7 @@ fun PotentialCompetitorRegistration(
                                                     if (errorMessages.isEmpty()) {
                                                         competitionsViewModel.postCompetitorToCompetitionById(
                                                             competitionID,
-                                                            competitor.id
+                                                            ParkourApi.CompetitourRequest(competitor.id)
                                                         )
                                                     } else {
                                                         Toast.makeText(
@@ -196,8 +198,6 @@ fun PotentialCompetitorRegistration(
                                                         ).show()
                                                     }
                                                 }
-
-                                                // competitionsViewModel.addCompetitorToCompetitionById(competitionID, competitor.id)
                                             }, colors = ButtonColors(
                                                 Color.Black,
                                                 contentColor = Color.White,
@@ -210,8 +210,6 @@ fun PotentialCompetitorRegistration(
                                             )
                                         }
                                     }
-
-
                                 }
                             }
                         }

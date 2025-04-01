@@ -40,8 +40,13 @@ interface ParkourApi {
     @POST("/api/competitions")
     suspend fun postCompetitions(@Body competition: CompetitionRequest): Response<Competition>
 
+    data class CompetitourRequest(val competitor_id: Int)
     @POST("/api/competitions/{id}/add_competitor")
-    suspend fun postCompetitorsToCompetitionById(@Path("id")id:Int, @Body competitors: Int): Response<Competitors>
+    suspend fun postCompetitorsToCompetitionById(
+        @Path("id")id:Int,
+        @Body request: CompetitourRequest
+    ): Response<Competitors>
+
 
     @PUT("/api/competitions/{id}")
     suspend fun putCompetition(@Path("id")id: Int,@Body competition: Competition): Response<Competition>

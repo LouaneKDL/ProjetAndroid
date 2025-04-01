@@ -24,8 +24,7 @@ fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: Courses
 
     var name by remember { mutableStateOf("") }
     var max_duration by remember { mutableStateOf("") }
-    var competitionId : Int = idCompetition!!
-
+    var competitionId : Int = -1
     var nameError by remember { mutableStateOf(false) }
     var maxDurationError by remember { mutableStateOf(false) }
 

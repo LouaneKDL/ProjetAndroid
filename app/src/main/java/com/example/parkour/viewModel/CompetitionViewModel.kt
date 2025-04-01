@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.parkour.api.RetrofitInstance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.parkour.api.ParkourApi
 import com.example.parkour.model.Competition
 import com.example.parkour.model.CompetitionRequest
 import com.example.parkour.model.CompetitorRequest
@@ -101,9 +102,11 @@ class CompetitionViewModel : ViewModel(){
     private val _competitorPost = MutableLiveData<Competitors>()
     val competitorPost: LiveData<Competitors> = _competitorPost
 
-    fun postCompetitorToCompetitionById(competitionId: Int, competitors: Int){
+    fun postCompetitorToCompetitionById(competitionId: Int, competitors: ParkourApi.CompetitourRequest){
         viewModelScope.launch {
             val response = parkourApi.postCompetitorsToCompetitionById(competitionId,competitors)
+            Log.d("API Request", "URL: /api/competitions/$competitionId/add_competitor")
+            Log.d("API Request", "Competitor ID: $competitors")
             if(response.isSuccessful){
                 _competitorPost.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())

@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("parkour_view/{id}"){
                             backStackEntry ->
-                                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                                val id = backStackEntry.arguments?.getString("id")?.toInt()
                             Parkour(
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,

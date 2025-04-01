@@ -1,6 +1,7 @@
 package com.example.parkour.views
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -45,7 +47,12 @@ fun Parkour(
 
     val parkours by viewModel.courses.observeAsState(emptyList())
     if (idCompetition != null) {
-        viewModel.getCoursesByCompetitionId(idCompetition)
+        LaunchedEffect(idCompetition) {
+            viewModel.getCoursesByCompetitionId(idCompetition)
+        }
+    }
+    else{
+        Log.i("oefkeo", "ifjiezfjzief")
     }
 
     Column(
