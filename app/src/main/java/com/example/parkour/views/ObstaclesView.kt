@@ -171,7 +171,7 @@ fun Obstacles(
                     elevation = CardDefaults.cardElevation(6.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Obstacle: ${obstacle.name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text("Obstacle: ${obstacle.obstacle_name}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = false, onCheckedChange = {})

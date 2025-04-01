@@ -129,7 +129,7 @@ fun ObstaclesOfTheParkour(
         Spacer(modifier = Modifier.height(10.dp))
 
         Button(
-            onClick = { } ,
+            onClick = { navController.navigate("add_obstacles_view") } ,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4)),
             modifier = Modifier.fillMaxWidth()
         ) {

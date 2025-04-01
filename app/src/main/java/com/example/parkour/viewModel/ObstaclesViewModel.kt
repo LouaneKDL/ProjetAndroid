@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
+import com.example.parkour.model.ObstacleNoDate
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
@@ -47,12 +48,13 @@ class ObstaclesViewModel : ViewModel() {
     private val _postObstacle = MutableLiveData<Obstacles>()
     val postObstacle: LiveData<Obstacles> = _postObstacle
 
-    fun postObstacle(obstacles: Obstacles){
+    fun postObstacle(obstacles: ObstacleNoDate){
         viewModelScope.launch{
             val response = parkourApi.postObstacle(obstacles)
             if(response.isSuccessful){
                 _postObstacle.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
+                getData()
             }
             else{
                 Log.i("Error :", response.message())

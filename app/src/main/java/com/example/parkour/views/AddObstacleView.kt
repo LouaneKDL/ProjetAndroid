@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.parkour.R
 import com.example.parkour.Routes
+import com.example.parkour.model.ObstacleNoDate
 import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.model.Obstacles
 import java.util.Calendar
@@ -61,47 +62,12 @@ import java.util.Calendar
 @Composable
 fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
     var obstacleName by rememberSaveable { mutableStateOf("") }
-    var obstacleCreated by rememberSaveable { mutableStateOf("") }
-    var obstacleUpdated by rememberSaveable { mutableStateOf("") }
     var errorMessage by rememberSaveable { mutableStateOf("") }
 
     val obstacles by viewModel.obstacles.observeAsState(emptyList())
     viewModel.getData()
 
     val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-
-   /*val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            obstacleUpdated = "$dayOfMonth/${month + 1}/$year"
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )*/
-    val datePickerCreated = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            val formattedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
-            obstacleCreated = formattedDate
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
-
-    val datePickerUpdated = DatePickerDialog(
-        context,
-        { _, year, month, dayOfMonth ->
-            val formattedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
-            obstacleUpdated = formattedDate
-        },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
-    )
-
 
     Column(
         modifier = Modifier
@@ -128,55 +94,16 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
                 .padding(vertical = 8.dp)
         )
 
-
-        OutlinedTextField(
-            value = obstacleCreated,
-            onValueChange = { obstacleCreated = it },
-            label = { Text(text = "Rentrer la date de création") },
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { datePickerCreated.show() }) {
-                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Sélectionner une date")
-                }
-            }
-        )
-
-// Champ pour obstacleUpdated
-        OutlinedTextField(
-            value = obstacleUpdated,
-            onValueChange = { obstacleUpdated = it },
-            label = { Text(text = "Rentrer la date de modification") },
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { datePickerUpdated.show() }) {
-                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Sélectionner une date")
-                }
-            }
-        )
-
-
-
-
         Button(
             onClick = {
-                Log.d("ObstacleInfo", "name: $obstacleName, created: $obstacleCreated, updated: $obstacleUpdated")
-                if (obstacleName.isNotEmpty() && obstacleCreated.isNotEmpty() && obstacleUpdated.isNotEmpty()) {
+              //  Log.d("ObstacleInfo", "name: $obstacleName, created: $obstacleCreated, updated: $obstacleUpdated")
+                if (obstacleName.isNotEmpty()) {
                     viewModel.postObstacle(
-                        Obstacles(
-                            id = 1,
+                        ObstacleNoDate(
                             name = obstacleName,
-                            created_at = obstacleCreated,
-                            updated_at = obstacleUpdated
                         )
                     )
+                    errorMessage = ""
                 } else {
                     errorMessage = "Tous les champs doivent être remplis."
                 }
@@ -210,16 +137,6 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
                 ) {
                     Text(
                         text = "➣  ${obstacle.name}",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "➣  ${obstacle.created_at}",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "➣  ${obstacle.updated_at}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
