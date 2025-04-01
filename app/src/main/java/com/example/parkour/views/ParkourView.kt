@@ -136,7 +136,7 @@ fun Parkour(
                                             if (parkour.is_over == 0) {
                                                 navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
                                             } else {
-                                                //classement
+                                                // navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
                                             }
                                         },
                                         colors = ButtonColors(
@@ -148,9 +148,9 @@ fun Parkour(
                                     ) {
                                         Image(
                                             imageVector = if (parkour.is_over == 0) {
-                                                ImageVector.vectorResource(R.drawable.baseline_people_alt_24)
+                                                ImageVector.vectorResource(R.drawable.pictogramme_classement)
                                             } else {
-                                                ImageVector.vectorResource(R.drawable.baseline_elevator_24)
+                                                ImageVector.vectorResource(R.drawable.pictogramme_classement)
                                             },
                                             contentDescription = if (parkour.is_over == 0) {
                                                 "concurrents"
