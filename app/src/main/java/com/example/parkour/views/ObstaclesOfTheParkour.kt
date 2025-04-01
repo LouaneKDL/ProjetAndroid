@@ -117,7 +117,7 @@ fun ObstaclesOfTheParkour(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ajouter parkour disponible", color = Color.White)
+            Text("Ajouter un obstacle disponible", color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -127,7 +127,7 @@ fun ObstaclesOfTheParkour(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Créer un nouveau parkour", color = Color.White)
+            Text("Créer un nouveau obstacle", color = Color.White)
         }
     }
 }
