@@ -24,6 +24,7 @@ import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
 import com.example.parkour.views.Parkour
+import com.example.parkour.views.ParkourClassificationView
 import com.example.parkour.views.ParkourRegistration
 import com.example.parkour.views.PotentialCompetitorRegistration
 
@@ -44,6 +45,16 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.competitionView, builder = {
+
+                        /*
+                        composable(Routes.parkourClassificationView + "/{parkourId}") {
+                            var parkourId = it.arguments?.getString("parkourId").orEmpty().toInt()
+                            ParkourClassificationView(
+                                modifier =  Modifier.padding(innerPadding),
+                                parkourId = parkourId,
+                            )
+                        }
+                         */
 
                         composable(Routes.addCompetitionView) {
                             AddCompetition(

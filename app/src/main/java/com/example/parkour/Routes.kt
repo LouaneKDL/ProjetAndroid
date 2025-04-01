@@ -8,4 +8,6 @@ object Routes {
     var competitorView = "competitor_view"
     var addCompetitionView = "add_competition_view"
     var addPotentialCompetitorRegistrationView = "add_potential_competitor/{id}"
+    var parkourClassificationView = "parkour_classification_view"
+
 }

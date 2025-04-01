@@ -136,7 +136,7 @@ fun Parkour(
                                             if (parkour.is_over == 0) {
                                                 navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
                                             } else {
-                                                // navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
+                                                // navController.navigate(Routes.parkourClassificationView + "/${parkour.id}")
                                             }
                                         },
                                         colors = ButtonColors(
