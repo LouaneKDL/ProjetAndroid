@@ -25,6 +25,7 @@ import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.AddCompetition
 import com.example.parkour.views.AddObstacle
+import com.example.parkour.views.AddObstacleAvailableView
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
@@ -32,6 +33,7 @@ import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourRegistration
 import com.example.parkour.views.PotentialCompetitorRegistration
 import com.example.parkour.views.Obstacles
+import com.example.parkour.views.ObstaclesOfTheParkour
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -49,7 +51,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             ParkourTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val navController = rememberNavController()
+
+
+
+                   val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.competitionView, builder = {
 
                         composable(Routes.addCompetitionView) {
@@ -63,6 +68,28 @@ class MainActivity : ComponentActivity() {
                             Competition(
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
+                                navController
+                            )
+                        }
+
+                        composable("obstacle_of_the_parkour_view/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
+                            ObstaclesOfTheParkour(
+                                obstaclesViewModel,
+                                coursesViewModel,
+                                id,
+                                navController
+                            )
+                        }
+
+                        composable("add_obstacle_available/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
+                            AddObstacleAvailableView(
+                                obstaclesViewModel,
+                                coursesViewModel,
+                                id,
                                 navController
                             )
                         }

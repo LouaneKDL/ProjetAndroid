@@ -11,4 +11,6 @@ object Routes {
     var obstaclesView = "obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}"
     var addObstacle = "add_obstacles_view"
 
+    var obstacleOfTheParkour = "obstacle_of_the_parkour_view/{id}"
+    var addObstacleAvailable = "add_obstacle_available/{id}"
 }

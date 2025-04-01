@@ -6,6 +6,8 @@ import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
+import com.example.parkour.model.ObstacleCourse
+import com.example.parkour.model.ObstaclePost
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
@@ -89,7 +91,7 @@ interface ParkourApi {
     suspend fun getCourses(): Response<List<Courses>>
 
     @GET("/api/courses/{id}/obstacles")
-    suspend fun getObstaclesByCourseId(@Path("id")id: Int) : Response<List<Obstacles>>
+    suspend fun getObstaclesByCourseId(@Path("id")id: Int) : Response<List<ObstacleCourse>>
 
     @GET("/api/courses/{id}/performances")
     suspend fun getPerformancesByCourseId(@Path("id")id: Int) : Response<List<Performances>>
@@ -100,10 +102,10 @@ interface ParkourApi {
     @POST("/api/courses")
     suspend fun postCourse(@Body courses: CourseRequest): Response<Courses>
 
-    @POST("/api/course/{id}/add_obstacle")
-    suspend fun postObstacleToCourseById(@Path("id")id: Int, @Body obstacles: Obstacles): Response<Obstacles>
+    @POST("/api/courses/{id}/add_obstacle")
+    suspend fun postObstacleToCourseById(@Path("id")id: Int, @Body obstacle: ObstaclePost): Response<Obstacles>
 
-    @POST("/api/course/{id}/update_obstacle_position")
+    @POST("/api/courses/{id}/update_obstacle_position")
     suspend fun postObstacleInCertainPositionByCourseId(@Path("id")id:Int, @Body obstacles: Obstacles): Response<Obstacles>
 
     @PUT("/api/courses/{id}")
