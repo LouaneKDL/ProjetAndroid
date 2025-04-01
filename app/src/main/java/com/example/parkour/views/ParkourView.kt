@@ -29,9 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
-import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.viewModel.CoursesViewModel
 
 
 @SuppressLint("ResourceType")
