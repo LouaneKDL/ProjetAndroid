@@ -21,6 +21,7 @@ import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.views.AddCompetition
+import com.example.parkour.views.AddObstacleAvailableView
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
 import com.example.parkour.views.Competitors
@@ -73,7 +74,19 @@ class MainActivity : ComponentActivity() {
                             ObstaclesOfTheParkour(
                                 obstaclesViewModel,
                                 coursesViewModel,
-                                id
+                                id,
+                                navController
+                            )
+                        }
+
+                        composable("add_obstacle_available/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
+                            AddObstacleAvailableView(
+                                obstaclesViewModel,
+                                coursesViewModel,
+                                id,
+                                navController
                             )
                         }
 

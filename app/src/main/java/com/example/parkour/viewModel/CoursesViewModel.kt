@@ -9,6 +9,7 @@ import com.example.parkour.api.RetrofitInstance
 import com.example.parkour.model.CourseRequest
 import com.example.parkour.model.Courses
 import com.example.parkour.model.ObstacleCourse
+import com.example.parkour.model.ObstaclePost
 import com.example.parkour.model.Obstacles
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
@@ -100,12 +101,16 @@ class CoursesViewModel : ViewModel() {
     private val _postObstacleCourse = MutableLiveData<Obstacles>()
     val postObstaclesCourse: LiveData<Obstacles> = _postObstacleCourse
 
-    fun postObstacleToCourseById(id: Int, obstacles: Obstacles){
+    fun postObstacleToCourseById(id: Int, obstacles: Int){
         viewModelScope.launch {
-            val response = parkourApi.postObstacleToCourseById(id,obstacles)
+            val obstaclePost = ObstaclePost(obstacles)
+            Log.i("Request Sent:", "ID: $id, Body: $obstaclePost")
+            Log.i("API Request", "POST /api/course/$id/add_obstacle with body: $obstaclePost")
+            val response = parkourApi.postObstacleToCourseById(id,obstaclePost)
             if(response.isSuccessful){
                 _postObstacleCourse.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
+                getObstaclesByCourseId(id)
             }
             else{
                 Log.i("Error :", response.message())
@@ -165,6 +170,7 @@ class CoursesViewModel : ViewModel() {
                 val response = parkourApi.deleteObstacleFromCourse(id, idObstacles)
                 if (response.isSuccessful) {
                     Log.i("Success", "Obstacle delete : ${response.body()}")
+                    getObstaclesByCourseId(id)
                 } else {
                     Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
                 }

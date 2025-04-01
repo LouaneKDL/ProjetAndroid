@@ -8,5 +8,6 @@ object Routes {
     var competitorView = "competitor_view"
     var addCompetitionView = "add_competition_view"
     var addPotentialCompetitorRegistrationView = "add_potential_competitor/{id}"
-    var obstacleAvailable = "obstacle_of_the_parkour_view/{id}"
+    var obstacleOfTheParkour = "obstacle_of_the_parkour_view/{id}"
+    var addObstacleAvailable = "add_obstacle_available/{id}"
 }

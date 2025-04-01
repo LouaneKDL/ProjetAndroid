@@ -1,5 +1,6 @@
 package com.example.parkour.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,29 +20,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.parkour.R
+import com.example.parkour.model.Obstacles
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.ObstaclesViewModel
 
 @Composable
-fun ObstaclesOfTheParkour(
+fun AddObstacleAvailableView(
     viewModelObstacles: ObstaclesViewModel,
     viewModelCourse: CoursesViewModel,
     idParkour: Int?,
-    navController: NavHostController
+    navController: NavHostController?
 ) {
-    val obstacles by viewModelCourse.obstacles.observeAsState(emptyList())
+    val obstacles by viewModelCourse.obstacles.observeAsState(emptyList())  // Obstacles de la course
+    val obstaclesAvailable by viewModelObstacles.obstacles.observeAsState(emptyList())  // Tous les obstacles
 
+    viewModelObstacles.getData()
     if (idParkour != null) {
         LaunchedEffect(idParkour) {
             viewModelCourse.getObstaclesByCourseId(idParkour)
         }
     }
 
-    val parkour by viewModelCourse.course.observeAsState()
-    if (idParkour != null) {
-        LaunchedEffect(idParkour) {
-            viewModelCourse.getCourseById(idParkour)
-        }
+
+
+    // Exclure les obstacles déjà utilisés dans la course
+    val existingObstacleIds = obstacles.map { it.obstacle_id }
+
+
+
+    var filteredObstacles by remember { mutableStateOf(emptyList<Obstacles>()) }
+
+    LaunchedEffect(obstacles, obstaclesAvailable) {
+        filteredObstacles = obstaclesAvailable.filter { it.id !in obstacles.map { o -> o.obstacle_id } }
     }
 
     Column(
@@ -52,7 +62,7 @@ fun ObstaclesOfTheParkour(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Obstacles du parkour : ${parkour?.name ?: "Chargement..."}",
+            text = "Obstacles disponibles",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.DarkGray,
@@ -72,7 +82,7 @@ fun ObstaclesOfTheParkour(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                items(obstacles) { obstacle ->
+                items(filteredObstacles) { obstacle ->  // Utilisation de la liste filtrée
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -88,52 +98,34 @@ fun ObstaclesOfTheParkour(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "➣ ${obstacle.obstacle_name}",
+                                text = "➣ ${obstacle.name}",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.weight(1f)
                             )
 
-                            Row {
-                                IconButton(
-                                    onClick = {
-                                        if (idParkour != null) {
-                                            viewModelCourse.deleteObstacleFromCourse(idParkour,obstacle.obstacle_id)
-                                        }
+                            IconButton(
+                                onClick = {
+                                    if (idParkour != null) {
+                                        Log.i("fkezifjzeipfezjifpjk","${obstacle.id}")
+                                        viewModelCourse.postObstacleToCourseById(idParkour,
+                                            obstacle.id
+                                        )
+                                        viewModelCourse.getObstaclesByCourseId(idParkour)
                                     }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.baseline_remove_24),
-                                        contentDescription = "Supprimer",
-                                        modifier = Modifier.size(32.dp),
-                                        tint = Color.Red
-                                    )
                                 }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_add_24),
+                                    contentDescription = "Ajouter",
+                                    modifier = Modifier.size(32.dp),
+                                    tint = Color.Green
+                                )
                             }
                         }
                     }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = { navController.navigate("add_obstacle_available/${idParkour}") },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA)),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Ajouter un obstacle disponible", color = Color.White)
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Button(
-            onClick = { } ,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4)),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Créer un nouveau obstacle", color = Color.White)
         }
     }
 }
