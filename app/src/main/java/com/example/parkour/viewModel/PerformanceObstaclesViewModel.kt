@@ -72,6 +72,7 @@ class PerformanceObstaclesViewModel : ViewModel() {
                 val response = parkourApi.putPerformanceObstacles(id, updatedPerformances)
                 if (response.isSuccessful) {
                     Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                    getPerfomanceById(id)
                 } else {
                     Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
                 }

@@ -123,7 +123,6 @@ fun Obstacles(
 
         Button(
             onClick = {
-                Log.i("ICIIII","LE BOUTON A ETE PRESSEEEEEEEEE ${idCompetitor}   ${idCourse}   ${idPerformances}   ${idPerformances}")
                 isTimerRunning = !isTimerRunning
 
                 if (performance == null) {
@@ -150,7 +149,6 @@ fun Obstacles(
 
                     if (updatedPerformances != null) {
                         performance?.let {
-                            Log.i("ICIIII","L'ID APRES CREATION EST ${it.id}")
                             performanceViewModel.updatePerformance(
                                 id = it.id,
                                 updatedPerformances = updatedPerformances
@@ -169,8 +167,6 @@ fun Obstacles(
                 color = Color.White
             )
         }
-
-        Log.i("ICIIII","L'ID APRES LA MAJ EST ${performance?.id} ${performance?.total_time}")
 
         val minutes = (time / 1000) / 60
         val seconds = (time / 1000) % 60
@@ -203,13 +199,8 @@ fun Obstacles(
 
                         for (detailsPerf in detailsPerformances){
 
-                            Log.i("ICIIII","ON A TROUVE PERFS ${obstacle.obstacle_id} ${performance!!.id} $detailsPerformances")
-
-                            Log.i("ICIIII","Boolean  ${detailsPerf.obstacle_id == obstacle.obstacle_id}")
-
                             if (detailsPerf.obstacle_id == obstacle.obstacle_id){
                                 detail = detailsPerf
-                                Log.i("ICIIII","ON A TROUVE DETAILS $detail ${performance!!.id} $detailsPerformances ${obstacle.id}")
                                 isObstacleDataReady = true
                             }
                         }
@@ -242,16 +233,38 @@ fun Obstacles(
                                 fontWeight = FontWeight.Bold
                             )
 
-                            Text("Temps sur l'obstacle - 00:00", fontSize = 16.sp)
+                            var timeObs = detail!!.time
+                            var minuteObs = (timeObs / 100) / 60
+                            var secondObs = (timeObs / 100) % 60
+                            var millisObs = timeObs % 100
+                            Text(String.format("Temps sur l'obstacle - %02d:%02d.%01d", minuteObs, secondObs, millisObs), fontSize = 16.sp)
 
-                            Button(
-                                onClick = { /* valider l'obstacle */ },
-                                colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Text("Valider l'obstacle", color = Color.White)
+                            if (detail!!.time == 0){
+                                Button(
+                                    onClick = {
+                                        val updatedPerformance_obstacles: Performance_obstaclesRequest? = detail?.let {
+                                            Performance_obstaclesRequest(
+                                                to_verify = detail!!.to_verify,
+                                                time = (detail!!.time/10).toInt(),
+                                                has_fell = detail!!.has_fell,
+                                            )
+                                        }
+
+                                        if (updatedPerformance_obstacles != null) {
+                                            detail?.let {
+                                                performanceObstaclesViewModel.updatePerformanceObstacles(
+                                                    id = it.id,
+                                                    updatedPerformances = updatedPerformance_obstacles
+                                                )
+                                            }
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Text("Valider l'obstacle", color = Color.White)
+                                }
                             }
-
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
@@ -269,7 +282,7 @@ fun Obstacles(
                                             detail!!.id,
                                             updatedPerformanceObstacles
                                         )
-                                    }
+                                    }, enabled = detail!!.time == 0
                                 )
                                 Text("Chute", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.width(20.dp))
@@ -289,44 +302,14 @@ fun Obstacles(
                                             detail!!.id,
                                             updatedPerformanceObstacles
                                         )
-                                    }
+                                    }, enabled = detail!!.time == 0
                                 )
                                 Text("À vérifier", fontSize = 16.sp)
                             }
                         }
                     }
 
-                } else if (isDataLoaded) {
-
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        colors = CardDefaults.cardColors(Color.White),
-                        elevation = CardDefaults.cardElevation(6.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                "Obstacle: ${obstacle.obstacle_name}",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "Aucune donnée de performance disponible pour cet obstacle",
-                                fontSize = 16.sp
-                            )
-
-                            Button(
-                                onClick = { /* créer une performance_obstacle */ },
-                                colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Text("Commencer à évaluer", color = Color.White)
-                            }
-
-                        }
-                    }
-                } else {
+                } /*else {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -351,7 +334,7 @@ fun Obstacles(
                         }
 
                     }
-                }
+                }*/
             }
             /* PAS ICI Button(
                 onClick = { /* Obtenir obstacles disponibles */ },
