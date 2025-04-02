@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.RetrofitInstance
-import com.example.parkour.model.Competitors
 import com.example.parkour.model.Performance_obstacles
+import com.example.parkour.model.Performance_obstaclesPost
 import com.example.parkour.model.Performance_obstaclesRequest
-import com.example.parkour.model.Performances
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PerformanceObstaclesViewModel : ViewModel() {
@@ -52,12 +52,14 @@ class PerformanceObstaclesViewModel : ViewModel() {
     private val _postPerformanceObstacle = MutableLiveData<Performance_obstacles>()
     val postPerformanceObstacle: LiveData<Performance_obstacles> = _postPerformanceObstacle
 
-    fun postPerformanceObstacles(performanceObstacles: Performance_obstacles){
+    fun postPerformanceObstacles(performanceObstacles: Performance_obstaclesPost){
         viewModelScope.launch{
             val response = parkourApi.postPerformanceObstacles(performanceObstacles)
             if(response.isSuccessful){
                 _postPerformanceObstacle.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
+                delay(500)
+                getData()
             }
             else{
                 Log.i("Error :", response.message())
@@ -72,7 +74,9 @@ class PerformanceObstaclesViewModel : ViewModel() {
                 val response = parkourApi.putPerformanceObstacles(id, updatedPerformances)
                 if (response.isSuccessful) {
                     Log.i("Success", "Parcours mis à jour : ${response.body()}")
+                    delay(1000)
                     getPerfomanceById(id)
+                    getData()
                 } else {
                     Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
                 }

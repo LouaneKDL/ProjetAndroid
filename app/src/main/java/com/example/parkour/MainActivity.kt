@@ -33,7 +33,7 @@ import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourClassificationView
 import com.example.parkour.views.ParkourRegistration
 import com.example.parkour.views.PotentialCompetitorRegistration
-import com.example.parkour.views.Obstacles
+import com.example.parkour.views.ObstaclesView
 import com.example.parkour.views.ObstaclesOfTheParkour
 
 class MainActivity : ComponentActivity() {
@@ -45,10 +45,11 @@ class MainActivity : ComponentActivity() {
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+        val performancesViewModel2 = ViewModelProvider(this)[PerformancesViewModel::class.java]
         val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
         val performanceObstaclesViewModel = ViewModelProvider(this)[PerformanceObstaclesViewModel::class.java]
-        //val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
-        //resetViewModel.reset()
+        val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
+        resetViewModel.reset()
 
         enableEdgeToEdge()
         setContent {
@@ -148,7 +149,7 @@ class MainActivity : ComponentActivity() {
                             val idCompetitor = backStackEntry.arguments?.getString("idCompetitor")?.toIntOrNull()
                             val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
                             val idPerformances = backStackEntry.arguments?.getString("idPerformances")?.toIntOrNull()
-                            Obstacles(
+                            ObstaclesView(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
                                 coursesViewModel,
