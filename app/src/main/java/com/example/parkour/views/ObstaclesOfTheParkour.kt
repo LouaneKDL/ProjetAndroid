@@ -44,6 +44,8 @@ fun ObstaclesOfTheParkour(
         }
     }
 
+    var constructionMode by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,6 +53,10 @@ fun ObstaclesOfTheParkour(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        ConstructionModeToggle(
+            isEnabled = constructionMode,
+            onToggle = { constructionMode = it }
+        )
         Text(
             text = "Obstacles du parkour : ${parkour?.name ?: "Chargement..."}",
             fontSize = 24.sp,
@@ -121,7 +127,8 @@ fun ObstaclesOfTheParkour(
         Button(
             onClick = { navController.navigate("add_obstacle_available/${idParkour}") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA)),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = constructionMode
         ) {
             Text("Ajouter un obstacle disponible", color = Color.White)
         }
@@ -131,7 +138,8 @@ fun ObstaclesOfTheParkour(
         Button(
             onClick = { navController.navigate("add_obstacles_view") } ,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4)),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = constructionMode
         ) {
             Text("Créer un nouveau obstacle", color = Color.White)
         }

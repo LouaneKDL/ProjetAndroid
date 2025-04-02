@@ -7,7 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,11 +17,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,12 +64,18 @@ fun Parkour(
         viewModel.getCompetitionById(idCompetition)
     }
 
+    var constructionMode by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        ConstructionModeToggle(
+            isEnabled = constructionMode,
+            onToggle = { constructionMode = it }
+        )
         Text(
             text = "Parkours de la compétition ${competition?.name}",
             modifier = modifier.padding(10.dp),
@@ -98,7 +111,7 @@ fun Parkour(
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
             ),
-            enabled = true
+            enabled = constructionMode
         ){
             Text(
                 text = "Ajouter un parkour",
