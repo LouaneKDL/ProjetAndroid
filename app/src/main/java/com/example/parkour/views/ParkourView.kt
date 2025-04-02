@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.R
+import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 
 
@@ -51,7 +53,7 @@ fun Parkour(
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
             text = "Parkours",
             modifier = modifier.padding(10.dp),
@@ -61,7 +63,7 @@ fun Parkour(
 
         Button(
             modifier = Modifier.padding(10.dp),
-            onClick = {navController.navigate("parkour_registration_view/${idCompetition}")},
+            onClick = { navController.navigate("parkour_registration_view/${idCompetition}") },
             colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
@@ -69,7 +71,7 @@ fun Parkour(
                 disabledContentColor = Color.White
             ),
             enabled = true
-        ){
+        ) {
             Text(
                 text = "Ajouter un parkour",
                 modifier = Modifier,
@@ -83,20 +85,21 @@ fun Parkour(
                 .background(Color.White)
                 .padding(8.dp)
 
-        ){
+        ) {
 
             LazyColumn {
-                for (parkour in parkours){
-                    item{
+                for (parkour in parkours) {
+                    item {
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                                .border(width = 1.dp, color = Color.Black)
+                                .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
 
-                            item{
+                            item {
 
                                 Column {
                                     Text(
@@ -127,36 +130,48 @@ fun Parkour(
                                     )
                                 }
                             }
-                            item{
-                                Column{
-                                    Button(
-                                        onClick = {
-                                            if (parkour.is_over == 0) {
-                                                navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
-                                            } else {
-                                                // navController.navigate(Routes.parkourClassificationView + "/${parkour.id}")
-                                            }
-                                        },
-                                        colors = ButtonColors(
-                                            Color.Black,
-                                            contentColor = Color.White,
-                                            disabledContainerColor = Color.Gray,
-                                            disabledContentColor = Color.White
-                                        )
-                                    ) {
-                                        Image(
-                                            imageVector = if (parkour.is_over == 0) {
-                                                ImageVector.vectorResource(R.drawable.pictogramme_classement)
-                                            } else {
-                                                ImageVector.vectorResource(R.drawable.pictogramme_classement)
+                            item {
+                                Column {
+                                    if (parkour.is_over == 0) {
+                                        Button(
+                                            onClick = {
+                                                // The right one
+                                                // navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
+
+                                                navController.navigate(Routes.parkourClassificationView + "/${idCompetition}/${parkour.id}")
                                             },
-                                            contentDescription = if (parkour.is_over == 0) {
-                                                "concurrents"
-                                            } else {
-                                                "podium"
-                                            }
-                                        )
+                                            colors = ButtonColors(
+                                                Color.Black,
+                                                contentColor = Color.White,
+                                                disabledContainerColor = Color.Gray,
+                                                disabledContentColor = Color.White
+                                            )
+                                        ) {
+                                            Image(
+                                                imageVector = ImageVector.vectorResource(R.drawable.baseline_people_alt_24),
+                                                contentDescription = "concurrents"
+                                            )
+                                        }
+                                    } else {
+                                        Button(
+                                            onClick = {
+                                                navController.navigate(Routes.parkourClassificationView + "/${parkour.id}")
+                                            },
+                                            colors = ButtonColors(
+                                                Color.Black,
+                                                contentColor = Color.White,
+                                                disabledContainerColor = Color.Gray,
+                                                disabledContentColor = Color.White
+                                            )
+                                        ) {
+                                            Image(
+                                                imageVector = ImageVector.vectorResource(R.drawable.baseline_elevator_24),
+                                                contentDescription = "podium",
+                                                colorFilter = ColorFilter.tint(Color.White)
+                                            )
+                                        }
                                     }
+
                                 }
                             }
                         }

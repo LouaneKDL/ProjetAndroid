@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Unused
         val competitionViewModel = ViewModelProvider(this)[CompetitionViewModel::class.java]
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
@@ -46,15 +45,19 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Routes.competitionView, builder = {
 
-                        /*
-                        composable(Routes.parkourClassificationView + "/{parkourId}") {
+
+                        composable(Routes.parkourClassificationView + "/{competitionId}/{parkourId}") {
                             var parkourId = it.arguments?.getString("parkourId").orEmpty().toInt()
+                            var competitionId = it.arguments?.getString("competitionId").orEmpty().toInt()
                             ParkourClassificationView(
                                 modifier =  Modifier.padding(innerPadding),
                                 parkourId = parkourId,
+                                competitionID = competitionId,
+                                competitionViewModel,
+                                performancesViewModel
                             )
                         }
-                         */
+
 
                         composable(Routes.addCompetitionView) {
                             AddCompetition(
