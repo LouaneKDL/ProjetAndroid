@@ -35,7 +35,14 @@ import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 
-
+/**
+ * Composable function to display a list of parkours for a specific competition.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetition The ID of the competition.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Parkour(
@@ -44,7 +51,7 @@ fun Parkour(
     navController: NavController,
     idCompetition: Int?
 ) {
-
+    // Observe the list of parkours for the competition
     val parkours by viewModel.courses.observeAsState(emptyList())
     if (idCompetition != null) {
         LaunchedEffect(idCompetition) {
@@ -52,6 +59,7 @@ fun Parkour(
         }
     }
 
+    // Observe the competition details
     val competition by viewModel.competition.observeAsState()
     if (idCompetition != null) {
         viewModel.getCompetitionById(idCompetition)
@@ -62,7 +70,7 @@ fun Parkour(
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
             text = "Parkours de la compétition ${competition?.name}",
             modifier = modifier.padding(10.dp),
@@ -70,9 +78,10 @@ fun Parkour(
             fontWeight = FontWeight.Bold
         )
 
+        // Button to navigate to the screen for adding a new parkour
         Button(
             modifier = Modifier.padding(10.dp),
-            onClick = {navController.navigate("parkour_registration_view/${idCompetition}")},
+            onClick = { navController.navigate("parkour_registration_view/${idCompetition}") },
             colors = ButtonColors(
                 Color.Black,
                 contentColor = Color.White,
@@ -80,7 +89,7 @@ fun Parkour(
                 disabledContentColor = Color.White
             ),
             enabled = true
-        ){
+        ) {
             Text(
                 text = "Ajouter un parkour",
                 modifier = Modifier,
@@ -93,59 +102,47 @@ fun Parkour(
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(Color.White)
                 .padding(8.dp)
-
-        ){
-
+        ) {
             LazyColumn {
-                for (parkour in parkours){
-                    item{
+                for (parkour in parkours) {
+                    item {
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                                .border(width = 1.dp, color = Color.Black)
+                                .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-
-                            item{
-
+                            item {
                                 Column {
                                     Text(
-                                        text = "➣  " + parkour.name,
+                                        text = "➣  ${parkour.name}",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • durée maximale : " + parkour.max_duration,
+                                        text = "        • durée maximale : ${parkour.max_duration}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • position : " + parkour.position,
+                                        text = "        • position : ${parkour.position}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + if (parkour.is_over == 1) {
-                                            "terminé"
-                                        } else {
-                                            "non terminé"
-                                        },
+                                        text = "        • ${if (parkour.is_over == 1) "terminé" else "non terminé"}",
                                         fontSize = 13.sp,
-                                        color = if (parkour.is_over == 1) {
-                                            Color.Green
-                                        } else {
-                                            Color.Red
-                                        }
+                                        color = if (parkour.is_over == 1) Color.Green else Color.Red
                                     )
                                 }
                             }
-                            item{
-                                Column{
+                            item {
+                                Column {
+                                    // Button to navigate to the screen for adding competitors to the parkour
                                     Button(
                                         onClick = {
                                             if (parkour.is_over == 0) {
                                                 navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
-                                            } else {
-                                                //classement
                                             }
                                         },
                                         colors = ButtonColors(
@@ -169,6 +166,7 @@ fun Parkour(
                                         )
                                     }
 
+                                    // Button to navigate to the screen for managing obstacles of the parkour
                                     Button(
                                         onClick = {
                                             navController.navigate("obstacle_of_the_parkour_view/${parkour.id}")

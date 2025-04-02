@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +23,14 @@ import com.example.parkour.model.Obstacles
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.ObstaclesViewModel
 
+/**
+ * Composable function to display and add available obstacles to a course.
+ *
+ * @param viewModelObstacles ViewModel for managing obstacle data.
+ * @param viewModelCourse ViewModel for managing course data.
+ * @param idParkour The ID of the parkour course to which obstacles can be added.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @Composable
 fun AddObstacleAvailableView(
     viewModelObstacles: ObstaclesViewModel,
@@ -31,27 +38,27 @@ fun AddObstacleAvailableView(
     idParkour: Int?,
     navController: NavHostController?
 ) {
-    val obstacles by viewModelCourse.obstacles.observeAsState(emptyList())  // Obstacles de la course
-    val obstaclesAvailable by viewModelObstacles.obstacles.observeAsState(emptyList())  // Tous les obstacles
+    // Observe the list of obstacles in the course and all available obstacles
+    val obstacles by viewModelCourse.obstacles.observeAsState(emptyList())
+    val obstaclesAvailable by viewModelObstacles.obstacles.observeAsState(emptyList())
 
+    // Fetch all available obstacles
     viewModelObstacles.getData()
+
+    // Fetch obstacles for the specific course if idParkour is provided
     if (idParkour != null) {
         LaunchedEffect(idParkour) {
             viewModelCourse.getObstaclesByCourseId(idParkour)
         }
     }
 
-
-
-    // Exclure les obstacles déjà utilisés dans la course
+    // Exclude obstacles already used in the course
     val existingObstacleIds = obstacles.map { it.obstacle_id }
 
-
-
+    // Filter available obstacles to exclude those already in the course
     var filteredObstacles by remember { mutableStateOf(emptyList<Obstacles>()) }
-
     LaunchedEffect(obstacles, obstaclesAvailable) {
-        filteredObstacles = obstaclesAvailable.filter { it.id !in obstacles.map { o -> o.obstacle_id } }
+        filteredObstacles = obstaclesAvailable.filter { it.id !in existingObstacleIds }
     }
 
     Column(
@@ -69,6 +76,7 @@ fun AddObstacleAvailableView(
             modifier = Modifier.padding(20.dp)
         )
 
+        // Card displaying the list of available obstacles
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -82,7 +90,7 @@ fun AddObstacleAvailableView(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                items(filteredObstacles) { obstacle ->  // Utilisation de la liste filtrée
+                items(filteredObstacles) { obstacle ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -104,13 +112,11 @@ fun AddObstacleAvailableView(
                                 modifier = Modifier.weight(1f)
                             )
 
+                            // Button to add the obstacle to the course
                             IconButton(
                                 onClick = {
                                     if (idParkour != null) {
-                                        Log.i("fkezifjzeipfezjifpjk","${obstacle.id}")
-                                        viewModelCourse.postObstacleToCourseById(idParkour,
-                                            obstacle.id
-                                        )
+                                        viewModelCourse.postObstacleToCourseById(idParkour, obstacle.id)
                                         viewModelCourse.getObstaclesByCourseId(idParkour)
                                     }
                                 }

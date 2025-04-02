@@ -46,7 +46,15 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
-// to convert date of birth to age
+/**
+ * Composable function to register potential competitors for a competition.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitorsViewModel ViewModel for managing competitor data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param competitionsViewModel ViewModel for managing competition data.
+ * @param competitionID The ID of the competition for which competitors are being registered.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PotentialCompetitorRegistration(
@@ -56,7 +64,7 @@ fun PotentialCompetitorRegistration(
     competitionsViewModel: CompetitionViewModel,
     competitionID: Int
 ) {
-
+    // Observe the list of competitors and registered competitors
     val competitors by competitorsViewModel.competitors.observeAsState(emptyList())
     competitorsViewModel.getData()
 
@@ -97,7 +105,6 @@ fun PotentialCompetitorRegistration(
             }
         }
 
-
         Text(
             text = "Concurrents",
             modifier = modifier.padding(10.dp),
@@ -127,7 +134,6 @@ fun PotentialCompetitorRegistration(
                 .padding(8.dp)
 
         ) {
-
             LazyColumn {
                 for (competitor in competitors) {
                     item {
@@ -139,9 +145,7 @@ fun PotentialCompetitorRegistration(
                                 .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-
                             item {
-
                                 Column {
                                     Text(
                                         text = "->  " + competitor.last_name + " " + competitor.first_name,
@@ -168,19 +172,16 @@ fun PotentialCompetitorRegistration(
                                     } else {
                                         Button(
                                             onClick = {
-                                                // to be added to a specific class with additional functions of this type
                                                 val format = "yyyy-MM-dd"
                                                 val formater = DateTimeFormatter.ofPattern(format)
-                                                val birthDate =
-                                                    LocalDate.parse(competitor.born_at, formater)
+                                                val birthDate = LocalDate.parse(competitor.born_at, formater)
                                                 val currentDate = LocalDate.now()
-                                                val age =
-                                                    Period.between(birthDate, currentDate).years
+                                                val age = Period.between(birthDate, currentDate).years
 
                                                 competition?.let {
                                                     var errorMessages = mutableListOf<String>()
                                                     if (age < it.age_min || age > it.age_max) {
-                                                        errorMessages.add("Ãge non valide (${age} ans) requis : ${it.age_min} - ${it.age_max}")
+                                                        errorMessages.add("Âge non valide (${age} ans) requis : ${it.age_min} - ${it.age_max}")
                                                     }
                                                     if (competitor.gender != it.gender) {
                                                         errorMessages.add("Genre non valide (${competitor.gender}) requis :${it.gender}")
@@ -217,6 +218,5 @@ fun PotentialCompetitorRegistration(
                 }
             }
         }
-
     }
 }

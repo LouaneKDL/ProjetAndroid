@@ -18,13 +18,28 @@ import com.example.parkour.model.CourseRequest
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 
+/**
+ * Composable function to register a new parkour course.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModelParkour ViewModel for managing parkour course data.
+ * @param competitionViewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetition The ID of the competition to which the parkour course belongs.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: CoursesViewModel, competitionViewModel: CompetitionViewModel, navController: NavController, idCompetition: Int?) {
-
+fun ParkourRegistration(
+    modifier: Modifier = Modifier,
+    viewModelParkour: CoursesViewModel,
+    competitionViewModel: CompetitionViewModel,
+    navController: NavController,
+    idCompetition: Int?
+) {
+    // State variables for parkour course details
     var name by remember { mutableStateOf("") }
     var max_duration by remember { mutableStateOf("") }
-    var competitionId : Int = -1
+    var competitionId: Int = idCompetition ?: -1
     var nameError by remember { mutableStateOf(false) }
     var maxDurationError by remember { mutableStateOf(false) }
 
@@ -43,6 +58,7 @@ fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: Courses
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
+        // Input field for parkour course name
         OutlinedTextField(
             value = name,
             onValueChange = { name = it; nameError = it.isBlank() },
@@ -61,6 +77,7 @@ fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: Courses
         )
         if (nameError) Text("Le nom est requis", color = Color.Red, fontSize = 12.sp)
 
+        // Input field for maximum duration
         OutlinedTextField(
             value = max_duration,
             onValueChange = { max_duration = it; maxDurationError = it.isBlank() },
@@ -79,17 +96,15 @@ fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: Courses
         )
         if (maxDurationError) Text("La durée maximale est requise", color = Color.Red, fontSize = 12.sp)
 
-
+        // Button to submit the parkour course data
         Button(
             onClick = {
                 nameError = name.isBlank()
                 maxDurationError = max_duration.isBlank()
 
                 if (!nameError && !maxDurationError) {
-
                     val course = CourseRequest(name, Integer.parseInt(max_duration), competitionId)
                     viewModelParkour.postCourse(course)
-                    
                     navController.popBackStack()
                 }
             },
@@ -97,7 +112,7 @@ fun ParkourRegistration(modifier: Modifier = Modifier, viewModelParkour: Courses
                 .fillMaxWidth()
                 .padding(top = 16.dp)
                 .height(50.dp),
-            enabled = !nameError && !maxDurationError ,
+            enabled = !nameError && !maxDurationError,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
         ) {
             Text("Ajouter", fontSize = 18.sp, color = Color.White)

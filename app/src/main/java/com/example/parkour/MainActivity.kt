@@ -35,28 +35,35 @@ import com.example.parkour.views.PotentialCompetitorRegistration
 import com.example.parkour.views.Obstacles
 import com.example.parkour.views.ObstaclesOfTheParkour
 
+/**
+ * MainActivity class for the Parkour application.
+ *
+ * This activity serves as the entry point for the application and sets up the navigation
+ * between different screens using Jetpack Compose and Navigation component.
+ */
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Unused
+        // Initialize ViewModels
         val competitionViewModel = ViewModelProvider(this)[CompetitionViewModel::class.java]
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
         val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
 
+        // Enable edge-to-edge content
         enableEdgeToEdge()
+
+        // Set the content view using Jetpack Compose
         setContent {
             ParkourTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val navController = rememberNavController()
 
-
-
-                   val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = Routes.competitionView, builder = {
-
+                    // Set up navigation graph
+                    NavHost(navController = navController, startDestination = Routes.competitionView) {
                         composable(Routes.addCompetitionView) {
                             AddCompetition(
                                 Modifier.padding(innerPadding),
@@ -64,16 +71,14 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
-                        composable(Routes.competitionView){
+                        composable(Routes.competitionView) {
                             Competition(
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
                                 navController
                             )
                         }
-
-                        composable("obstacle_of_the_parkour_view/{id}"){
-                                backStackEntry ->
+                        composable("obstacle_of_the_parkour_view/{id}") { backStackEntry ->
                             val id = backStackEntry.arguments?.getString("id")?.toInt()
                             ObstaclesOfTheParkour(
                                 obstaclesViewModel,
@@ -82,9 +87,7 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
-
-                        composable("add_obstacle_available/{id}"){
-                                backStackEntry ->
+                        composable("add_obstacle_available/{id}") { backStackEntry ->
                             val id = backStackEntry.arguments?.getString("id")?.toInt()
                             AddObstacleAvailableView(
                                 obstaclesViewModel,
@@ -93,16 +96,13 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
-
                         composable(Routes.addObstacle) {
                             AddObstacle(
                                 obstaclesViewModel,
                                 navController
                             )
                         }
-
-                        composable("obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}"){
-                                backStackEntry ->
+                        composable("obstacles_view/{idCompetitor}/{idCourse}/{idPerformances}") { backStackEntry ->
                             val idCompetitor = backStackEntry.arguments?.getString("idCompetitor")?.toIntOrNull()
                             val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
                             val idPerformances = backStackEntry.arguments?.getString("idPerformances")?.toIntOrNull()
@@ -117,8 +117,7 @@ class MainActivity : ComponentActivity() {
                                 idPerformances
                             )
                         }
-
-                        composable("competition_registration_view"){
+                        composable("competition_registration_view") {
                             CompetitorRegistration(
                                 modifier = Modifier.padding(innerPadding),
                                 competitorsViewModel,
@@ -126,10 +125,8 @@ class MainActivity : ComponentActivity() {
                                 navController,
                             )
                         }
-
-                        composable("parkour_registration_view/{id}"){
-                            backStackEntry ->
-                                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+                        composable("parkour_registration_view/{id}") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
                             ParkourRegistration(
                                 modifier = Modifier.padding(innerPadding),
                                 coursesViewModel,
@@ -138,10 +135,8 @@ class MainActivity : ComponentActivity() {
                                 id
                             )
                         }
-
-                        composable("parkour_view/{id}"){
-                            backStackEntry ->
-                                val id = backStackEntry.arguments?.getString("id")?.toInt()
+                        composable("parkour_view/{id}") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
                             Parkour(
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
@@ -149,11 +144,9 @@ class MainActivity : ComponentActivity() {
                                 id
                             )
                         }
-
-                        composable("competitor_view/{idCompetition}/{idCourse}"){
-                            backStackEntry ->
-                                val idCompetition = backStackEntry.arguments?.getString("idCompetition")?.toIntOrNull()
-                                val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
+                        composable("competitor_view/{idCompetition}/{idCourse}") { backStackEntry ->
+                            val idCompetition = backStackEntry.arguments?.getString("idCompetition")?.toIntOrNull()
+                            val idCourse = backStackEntry.arguments?.getString("idCourse")?.toIntOrNull()
                             Competitors(
                                 modifier = Modifier.padding(innerPadding),
                                 competitionViewModel,
@@ -165,9 +158,7 @@ class MainActivity : ComponentActivity() {
                                 idCourse
                             )
                         }
-
-                        composable("add_potential_competitor/{id}"){
-                                backStackEntry ->
+                        composable("add_potential_competitor/{id}") { backStackEntry ->
                             val idCompetition = backStackEntry.arguments?.getString("id").orEmpty().toInt()
                             PotentialCompetitorRegistration(
                                 modifier = Modifier.padding(innerPadding),
@@ -177,19 +168,7 @@ class MainActivity : ComponentActivity() {
                                 idCompetition
                             )
                         }
-
-
-
-
-
-
-                    })
-                    /*
-                    Competition(
-                        modifier = Modifier.padding(innerPadding),
-                        viewModels
-                    )
-                    */
+                    }
                 }
             }
         }

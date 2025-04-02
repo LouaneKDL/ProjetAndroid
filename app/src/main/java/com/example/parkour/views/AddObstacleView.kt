@@ -18,19 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -58,12 +55,19 @@ import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.model.Obstacles
 import java.util.Calendar
 
-
+/**
+ * Composable function to add a new obstacle.
+ *
+ * @param viewModel ViewModel for managing obstacle data.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @Composable
 fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
+    // State variables for obstacle details and error message
     var obstacleName by rememberSaveable { mutableStateOf("") }
     var errorMessage by rememberSaveable { mutableStateOf("") }
 
+    // Observe the list of obstacles
     val obstacles by viewModel.obstacles.observeAsState(emptyList())
     viewModel.getData()
 
@@ -84,6 +88,7 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
             modifier = Modifier.padding(bottom = 20.dp)
         )
 
+        // Input field for obstacle name
         OutlinedTextField(
             value = obstacleName,
             onValueChange = { obstacleName = it },
@@ -94,9 +99,9 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
                 .padding(vertical = 8.dp)
         )
 
+        // Button to submit the obstacle data
         Button(
             onClick = {
-              //  Log.d("ObstacleInfo", "name: $obstacleName, created: $obstacleCreated, updated: $obstacleUpdated")
                 if (obstacleName.isNotEmpty()) {
                     viewModel.postObstacle(
                         ObstacleNoDate(
@@ -114,6 +119,7 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
             Text("Valider")
         }
 
+        // Display error message if any
         if (errorMessage.isNotEmpty()) {
             Text(
                 text = errorMessage,
@@ -123,6 +129,7 @@ fun AddObstacle(viewModel: ObstaclesViewModel, navController: NavController) {
             )
         }
 
+        // List of existing obstacles
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

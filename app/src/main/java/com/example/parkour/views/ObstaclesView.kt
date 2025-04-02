@@ -14,9 +14,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +28,18 @@ import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 
+/**
+ * Composable function to display and manage obstacles for a specific competitor's performance.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitorViewModel ViewModel for managing competitor data.
+ * @param coursesViewModel ViewModel for managing course data.
+ * @param performanceViewModel ViewModel for managing performance data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetitor The ID of the competitor.
+ * @param idCourse The ID of the course.
+ * @param idPerformances The ID of the performance.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceType")
 @Composable
@@ -44,9 +53,11 @@ fun Obstacles(
     idCourse: Int?,
     idPerformances: Int?
 ) {
+    // State variables for managing the timer
     var time by remember { mutableStateOf(0L) }
     var isTimerRunning by remember { mutableStateOf(false) }
 
+    // LaunchedEffect to run the timer when isTimerRunning is true
     LaunchedEffect(isTimerRunning) {
         while (isTimerRunning) {
             val startTime = System.currentTimeMillis()
@@ -56,6 +67,7 @@ fun Obstacles(
         }
     }
 
+    // Observe the list of obstacles for the course
     val obstacles by coursesViewModel.obstacles.observeAsState(emptyList())
     if (idCourse != null) {
         LaunchedEffect(idCourse) {
@@ -63,6 +75,7 @@ fun Obstacles(
         }
     }
 
+    // Observe the competitor details
     val competitor by competitorViewModel.competitor.observeAsState()
     if (idCompetitor != null) {
         LaunchedEffect(idCompetitor) {
@@ -70,6 +83,7 @@ fun Obstacles(
         }
     }
 
+    // Observe the course details
     val course by coursesViewModel.course.observeAsState()
     if (idCourse != null) {
         LaunchedEffect(idCourse) {
@@ -77,6 +91,7 @@ fun Obstacles(
         }
     }
 
+    // Observe the performance details
     val performance by performanceViewModel.performance.observeAsState()
     if (idPerformances != null) {
         LaunchedEffect(idPerformances) {
@@ -98,14 +113,15 @@ fun Obstacles(
             modifier = Modifier.padding(bottom = 10.dp)
         )
 
+        // Button to start or stop the timer
         Button(
             onClick = {
-
                 isTimerRunning = !isTimerRunning
 
-                if (performance == null){
-                    var idPerformances = 9999 // /!\ ID à auto incrémenter
-                    var emptyPerformance: Performances = Performances(
+                if (performance == null) {
+                    // Create a new performance if none exists
+                    val idPerformances = 9999 // /!\ ID to auto increment
+                    val emptyPerformance = Performances(
                         id = idPerformances,
                         competitor_id = idCompetitor ?: -1,
                         course_id = idCourse ?: -1,
@@ -118,9 +134,9 @@ fun Obstacles(
                     performanceViewModel.getPerformanceById(idPerformances)
                 }
 
-                if (isTimerRunning == false){
-
-                    var updatedPerformances: Performances? = performance?.let {
+                if (!isTimerRunning) {
+                    // Update the performance with the elapsed time
+                    val updatedPerformance = performance?.let {
                         Performances(
                             id = it.id,
                             competitor_id = it.competitor_id,
@@ -132,16 +148,13 @@ fun Obstacles(
                         )
                     }
 
-                    if (updatedPerformances != null) {
-                        performance?.let {
-                            performanceViewModel.updatePerformance(
-                                id = it.id,
-                                updatedPerformances = updatedPerformances
-                            )
-                        }
+                    updatedPerformance?.let {
+                        performanceViewModel.updatePerformance(
+                            id = it.id,
+                            updatedPerformances = it
+                        )
                     }
                 }
-
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
             modifier = Modifier.padding(16.dp)
@@ -149,6 +162,7 @@ fun Obstacles(
             Text(if (isTimerRunning) "Arrêter le parcours" else "Démarrer le parcours", color = Color.White)
         }
 
+        // Display the total elapsed time
         val minutes = (time / 1000) / 60
         val seconds = (time / 1000) % 60
         val milliseconds = time % 1000
@@ -160,6 +174,7 @@ fun Obstacles(
             modifier = Modifier.padding(16.dp)
         )
 
+        // List of obstacles with their details
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
@@ -188,6 +203,7 @@ fun Obstacles(
             }
         }
 
+        // Button to navigate to available obstacles
         Button(
             onClick = { /* Obtenir obstacles disponibles */ },
             colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),

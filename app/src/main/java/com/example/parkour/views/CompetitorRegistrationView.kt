@@ -17,10 +17,18 @@ import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
+/**
+ * Composable function to register a new competitor.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModelCompetitor ViewModel for managing competitor data.
+ * @param competitionViewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: CompetitorsViewModel, competitionViewModel: CompetitionViewModel, navController: NavController) {
-
+    // State variables for competitor details
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -28,15 +36,15 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
     var gender by remember { mutableStateOf("H") }
     var bornAt by remember { mutableStateOf("") }
 
+    // Error state variables for form validation
     var firstNameError by remember { mutableStateOf(false) }
     var lastNameError by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
     var phoneError by remember { mutableStateOf(false) }
     var bornAtError by remember { mutableStateOf(false) }
 
+    // Observe the response from the competitor post request
     val competitorResponse by competitionViewModel.competitorPost.observeAsState()
-
-
 
     Column(
         modifier = modifier
@@ -53,6 +61,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
+        // Input field for first name
         OutlinedTextField(
             value = firstName,
             onValueChange = { firstName = it; firstNameError = it.isBlank() },
@@ -71,6 +80,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         )
         if (firstNameError) Text("Le prénom est requis", color = Color.Red, fontSize = 12.sp)
 
+        // Input field for last name
         OutlinedTextField(
             value = lastName,
             onValueChange = { lastName = it; lastNameError = it.isBlank() },
@@ -89,6 +99,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         )
         if (lastNameError) Text("Le nom est requis", color = Color.Red, fontSize = 12.sp)
 
+        // Input field for email
         OutlinedTextField(
             value = email,
             onValueChange = {
@@ -110,6 +121,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         )
         if (emailError) Text("Email invalide", color = Color.Red, fontSize = 12.sp)
 
+        // Input field for phone number
         OutlinedTextField(
             value = phone,
             onValueChange = {
@@ -131,6 +143,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         )
         if (phoneError) Text("Numéro invalide (10 chiffres requis)", color = Color.Red, fontSize = 12.sp)
 
+        // Input field for date of birth
         OutlinedTextField(
             value = bornAt,
             onValueChange = {
@@ -152,6 +165,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         )
         if (bornAtError) Text("Format de date invalide", color = Color.Red, fontSize = 12.sp)
 
+        // Gender selection buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -174,6 +188,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             }
         }
 
+        // Button to submit the competitor data
         Button(
             onClick = {
                 firstNameError = firstName.isBlank()
@@ -186,7 +201,8 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
                     val competitor = CompetitorRequest(firstName, lastName, email, phone, gender, bornAt)
                     viewModelCompetitor.postCompetitor(competitor)
 
-                 //à fix   competitionViewModel.postCompetitorToCompetitionById(0, competitor)
+                    // Fix the competition ID here
+                    // competitionViewModel.postCompetitorToCompetitionById(0, competitor)
                     navController.popBackStack()
                 }
             },

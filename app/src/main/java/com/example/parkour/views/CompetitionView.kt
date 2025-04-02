@@ -43,17 +43,18 @@ import androidx.navigation.NavController
 import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
-import com.example.parkour.viewModel.CompetitorsViewModel
-import com.example.parkour.viewModel.CoursesViewModel
-import com.example.parkour.viewModel.ObstaclesViewModel
-import com.example.parkour.viewModel.PerformanceObstaclesViewModel
-import com.example.parkour.viewModel.PerformancesViewModel
 
-
+/**
+ * Composable function to display a list of competitions and navigate to related views.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, navController: NavController) {
-
+    // Observe the list of competitions
     val competitions by viewModel.competitions.observeAsState(emptyList())
     viewModel.getData()
 
@@ -62,7 +63,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
             text = "Compétitions",
             modifier = modifier.padding(10.dp),
@@ -70,6 +71,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
             fontWeight = FontWeight.Bold
         )
 
+        // Button to navigate to the add competition screen
         Button(
             modifier = Modifier.padding(10.dp),
             onClick = {
@@ -80,9 +82,8 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                 contentColor = Color.White,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
-            ),
-            // enabled = false
-        ){
+            )
+        ) {
             Text(
                 text = "Ajouter une compétition",
                 modifier = Modifier,
@@ -90,45 +91,44 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
             )
         }
 
+        // Container for the list of competitions
         Column(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(Color.White)
                 .padding(8.dp)
-
-        ){
-
+        ) {
             LazyColumn {
-                for (compete in competitions){
-                    item{
+                competitions.forEach { compete ->
+                    item {
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                                .border(width = 1.dp, color = Color.Black)
+                                .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-
-                            item{
-
+                            item {
                                 Column {
                                     Text(
-                                        text = "➣  " + compete.name,
+                                        text = "➣  ${compete.name}",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + compete.gender,
+                                        text = "        • ${compete.gender}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + compete.age_min + " à " + compete.age_max,
+                                        text = "        • ${compete.age_min} à ${compete.age_max}",
                                         fontSize = 13.sp
                                     )
                                 }
                             }
-                            item{
-                                Column{
+                            item {
+                                Column {
+                                    // Button to navigate to the add competitors screen
                                     Button(
                                         onClick = {
                                             navController.navigate("add_potential_competitor/${compete.id}")
@@ -145,6 +145,7 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                                             contentDescription = "concurrents"
                                         )
                                     }
+                                    // Button to navigate to the competition details screen
                                     Button(
                                         onClick = {
                                             navController.navigate("parkour_view/${compete.id}")
@@ -168,9 +169,5 @@ fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, 
                 }
             }
         }
-
-
-
     }
-
 }

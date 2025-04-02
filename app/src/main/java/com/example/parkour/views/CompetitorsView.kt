@@ -38,7 +38,18 @@ import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 
-
+/**
+ * Composable function to display a list of competitors in a specific course.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitionViewModel ViewModel for managing competition data.
+ * @param competitorsViewModel ViewModel for managing competitor data.
+ * @param performancesViewModel ViewModel for managing performance data.
+ * @param coursesViewModel ViewModel for managing course data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetition The ID of the competition.
+ * @param idCourse The ID of the course.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Competitors(
@@ -51,8 +62,7 @@ fun Competitors(
     idCompetition: Int?,
     idCourse: Int?
 ) {
-
-
+    // Observe the list of competitors
     val competitors by competitionViewModel.competitors.observeAsState(emptyList())
     if (idCompetition != null) {
         LaunchedEffect(idCompetition) {
@@ -60,10 +70,10 @@ fun Competitors(
         }
     }
 
+    // Filter competitors based on the course ID
     val competitorsList = mutableListOf<Competitors>()
     val coursesCache = mutableMapOf<Int, List<Courses>>()
     for (competitor in competitors) {
-
         val courses = coursesCache.getOrPut(competitor.id) {
             competitorsViewModel.getCoursesByACompetitor(competitor.id)
             competitorsViewModel.courses.value ?: emptyList()
@@ -74,11 +84,13 @@ fun Competitors(
         }
     }
 
+    // Observe the course details
     val course by coursesViewModel.course.observeAsState()
     if (idCourse != null) {
         coursesViewModel.getCourseById(idCourse)
     }
 
+    // Observe the performance details
     val details by performancesViewModel.performances.observeAsState(emptyList())
     performancesViewModel.getData()
 
@@ -87,7 +99,7 @@ fun Competitors(
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Text(
             text = "Compétiteurs du parkour ${course?.name}",
             modifier = modifier.padding(10.dp),
@@ -100,77 +112,67 @@ fun Competitors(
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(Color.White)
                 .padding(8.dp)
-
-        ){
-
+        ) {
             LazyColumn {
-
-                var detailCompetitor : Performances? = null
-                for (competitor in competitorsList){
-
-                    item{
+                var detailCompetitor: Performances? = null
+                for (competitor in competitorsList) {
+                    item {
                         LazyRow(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .width(300.dp)
-                                .border(width = 1.dp, color = Color.Black).padding(10.dp),
+                                .border(width = 1.dp, color = Color.Black)
+                                .padding(10.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-
-                            item{
-
+                            item {
                                 Column {
                                     Text(
-                                        text = "➣  " + competitor.first_name + " " + competitor.last_name,
+                                        text = "➣  ${competitor.first_name} ${competitor.last_name}",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "        • " + competitor.gender,
+                                        text = "        • ${competitor.gender}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + competitor.born_at,
+                                        text = "        • ${competitor.born_at}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + competitor.email,
+                                        text = "        • ${competitor.email}",
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = "        • " + competitor.phone,
+                                        text = "        • ${competitor.phone}",
                                         fontSize = 13.sp
                                     )
 
-                                    for (detail in details){
-                                        if (detail.course_id == idCourse && detail.competitor_id == competitor.id){
+                                    // Display performance details if available
+                                    for (detail in details) {
+                                        if (detail.course_id == idCourse && detail.competitor_id == competitor.id) {
                                             detailCompetitor = detail
                                         }
                                     }
 
-                                    if (detailCompetitor != null){
+                                    if (detailCompetitor != null) {
                                         Text(
-                                            text = "        • Statut du parkour : " +
-                                                    if (detailCompetitor!!.status == "over") {
-                                                        "terminé"
-                                                    }
-                                                    else if (detailCompetitor!!.status == "to_verify"){
-                                                        "à vérifier"
-                                                    }
-                                                    else if (detailCompetitor!!.status == "to_finish"){
-                                                        "à finir"
-                                                    }
-                                                    else{
-                                                        "défection"
-                                                    },
+                                            text = "        • Statut du parkour : ${
+                                                when (detailCompetitor!!.status) {
+                                                    "over" -> "terminé"
+                                                    "to_verify" -> "à vérifier"
+                                                    "to_finish" -> "à finir"
+                                                    else -> "défection"
+                                                }
+                                            }",
                                             fontSize = 13.sp
                                         )
                                         Text(
-                                            text = "        • Durée totale : " + detailCompetitor!!.total_time/20/60 + " minutes",
+                                            text = "        • Durée totale : ${detailCompetitor!!.total_time / 20 / 60} minutes",
                                             fontSize = 13.sp
                                         )
-                                    }
-                                    else{
+                                    } else {
                                         Text(
                                             text = "        • Statut du parkour : non commencé",
                                             fontSize = 13.sp
@@ -180,12 +182,11 @@ fun Competitors(
                                             fontSize = 13.sp
                                         )
                                     }
-
-
                                 }
                             }
-                            item{
-                                Column{
+                            item {
+                                Column {
+                                    // Button to navigate to obstacle details
                                     Button(
                                         onClick = {
                                             navController.navigate("obstacles_view/${competitor.id}/${idCourse}/${detailCompetitor?.id}")
