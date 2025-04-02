@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Performances
 import com.example.parkour.viewModel.CompetitionViewModel
+import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +30,8 @@ fun ParkourClassificationView(
     parkourId: Int,
     competitionID: Int,
     competitionViewModel: CompetitionViewModel,
-    performancesViewModel: PerformancesViewModel
+    performancesViewModel: PerformancesViewModel,
+    coursesViewModel: CoursesViewModel
 ) {
     val registeredCompetitors by competitionViewModel.competitors.observeAsState(emptyList())
     LaunchedEffect(competitionID) {
@@ -41,6 +43,12 @@ fun ParkourClassificationView(
         performancesViewModel.getData()
     }
 
+    val course by coursesViewModel.course.observeAsState()
+    LaunchedEffect(Unit) {
+        coursesViewModel.getCourseById(parkourId)
+    }
+
+
     // performancesViewModel.getPerformanceById()
     /*
     val competitorsWithPerformance = registeredCompetitors.map { competitor ->
@@ -48,10 +56,17 @@ fun ParkourClassificationView(
         competitor to (performance?.total_time ?: Long.MAX_VALUE)
     }.sortedBy { it.second }
      */
+
+
     val competitorsWithPerformance = registeredCompetitors.map { competitor ->
         val performance = performances.find { it.competitor_id == competitor.id }
         competitor to performance
     }.sortedBy { it.second?.total_time ?: Int.MAX_VALUE }
+
+    val sortedCompetitors = competitorsWithPerformance
+        .sortedWith(compareBy({ it.second?.status == "defected" }, { it.second?.total_time ?: Int.MAX_VALUE }))
+        //.sortedWith(compareBy({ it.second?.status == "defected" }, { it.second?.status == "to_finish" }, { it.second?.status == "to_verify" }, { it.second?.total_time ?: Int.MAX_VALUE }))
+        //.sortedWith(compareBy({ it.second?.status != "over" }, { it.second?.total_time ?: Int.MAX_VALUE }))
 
     Column(
         modifier = modifier
@@ -61,7 +76,7 @@ fun ParkourClassificationView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Classement",
+            text = "Classement pour le parkour ${course?.name}",
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
@@ -73,7 +88,7 @@ fun ParkourClassificationView(
             modifier = Modifier.fillMaxSize()
         ) {
             items(
-                competitorsWithPerformance.withIndex().toList()
+                sortedCompetitors.withIndex().toList()
             ) { (index, pair) -> // pair correspond to the competitor with the performance
                 CompetitorItem(rank = index + 1, competitor = pair.first, performance = pair.second)
             }
@@ -84,6 +99,14 @@ fun ParkourClassificationView(
 @SuppressLint("DefaultLocale")
 @Composable
 fun CompetitorItem(rank: Int, competitor: Competitors, performance: Performances?) {
+
+    val backgroundColor = when (rank) {
+        1 -> Color(0xFFFFD700)
+        2 -> Color(0xFFC0C0C0)
+        3 -> Color(0xFFCD7F32)
+        else -> Color.White
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,6 +115,7 @@ fun CompetitorItem(rank: Int, competitor: Competitors, performance: Performances
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(backgroundColor)
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -104,37 +128,51 @@ fun CompetitorItem(rank: Int, competitor: Competitors, performance: Performances
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            // Nom du concurrent
-            Text(
-                text = competitor.first_name.uppercase() + " " + competitor.last_name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
+            Column(
                 modifier = Modifier.weight(1f)
-            )
-            // Récupération du temps total en millisecondes
+            ) {
+                Text(
+                    text = competitor.first_name.uppercase() + " " + competitor.last_name,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = when (performance?.status) {
+                        "to_verify" -> "À Vérifier"
+                        "to_finish" -> "À Finir"
+                        "defected" -> "Disqualifié"
+                        else -> "Terminé"
+                    },
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    // color = Color.Gray
+                )
+            }
+
             val millis = (performance?.total_time?.toLong()) ?: 0L
 
-            // Conversion en heures, minutes et secondes
             val hours = TimeUnit.MILLISECONDS.toHours(millis)
             val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
             val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60
 
-            // Formatage du temps en HH:mm:ss
-            val formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            val formattedTime = buildString {
+                if (hours > 0) append("${hours}h ")
+                if (minutes > 0 || hours > 0) append("${minutes}min ")
+                append("${seconds}s")
+            }.trim()
 
-            // Vérification du score (évite les erreurs si performance est null)
-            val scoreText = if (performance?.total_time != null && performance.total_time > 0) {
-                "Score : %.1f s".format(millis / 1000.0) // Arrondi avec 1 décimale
-            } else {
-                "Score : disqualifié"
+            val displayText = when {
+                performance == null -> "Aucune donnée"
+                performance.status == "defected" -> "Disqualifié"
+                else -> formattedTime
             }
 
-            // Affichage dans Compose
             Text(
-                text = "$scoreText\nTemps : $formattedTime",
+                text = displayText,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
         }
     }
 }
+

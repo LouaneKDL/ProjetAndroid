@@ -135,10 +135,7 @@ fun Parkour(
                                     if (parkour.is_over == 0) {
                                         Button(
                                             onClick = {
-                                                // The right one
-                                                // navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
-
-                                                navController.navigate(Routes.parkourClassificationView + "/${idCompetition}/${parkour.id}")
+                                                navController.navigate("competitor_view/${idCompetition}/${parkour.id}")
                                             },
                                             colors = ButtonColors(
                                                 Color.Black,
@@ -155,7 +152,7 @@ fun Parkour(
                                     } else {
                                         Button(
                                             onClick = {
-                                                navController.navigate(Routes.parkourClassificationView + "/${parkour.id}")
+                                                navController.navigate(Routes.parkourClassificationView + "/${idCompetition}/${parkour.id}")
                                             },
                                             colors = ButtonColors(
                                                 Color.Black,

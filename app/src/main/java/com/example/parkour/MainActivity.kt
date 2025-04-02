@@ -54,7 +54,8 @@ class MainActivity : ComponentActivity() {
                                 parkourId = parkourId,
                                 competitionID = competitionId,
                                 competitionViewModel,
-                                performancesViewModel
+                                performancesViewModel,
+                                coursesViewModel
                             )
                         }
 
