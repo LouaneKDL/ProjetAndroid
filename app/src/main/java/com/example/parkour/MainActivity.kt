@@ -48,8 +48,8 @@ class MainActivity : ComponentActivity() {
         val performancesViewModel2 = ViewModelProvider(this)[PerformancesViewModel::class.java]
         val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
         val performanceObstaclesViewModel = ViewModelProvider(this)[PerformanceObstaclesViewModel::class.java]
-        val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
-        resetViewModel.reset()
+        //val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
+        //resetViewModel.reset()
 
         enableEdgeToEdge()
         setContent {
