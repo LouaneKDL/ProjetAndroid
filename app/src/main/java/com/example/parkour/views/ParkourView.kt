@@ -92,7 +92,7 @@ fun Parkour(
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
             ),
-            enabled = true
+            enabled = constructionMode
         ){
             Text(
                 text = "Modifier la compétition",

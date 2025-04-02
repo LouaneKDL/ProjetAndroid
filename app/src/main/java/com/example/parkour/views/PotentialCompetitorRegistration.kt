@@ -24,6 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,12 +72,18 @@ fun PotentialCompetitorRegistration(
 
     val context = LocalContext.current
 
+    var constructionMode by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.LightGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        ConstructionModeToggle(
+            isEnabled = constructionMode,
+            onToggle = { constructionMode = it }
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -105,6 +114,7 @@ fun PotentialCompetitorRegistration(
             fontWeight = FontWeight.Bold
         )
         Button(
+            enabled = constructionMode,
             onClick = {
                 navController.navigate("competition_registration_view")
 
@@ -228,6 +238,7 @@ fun PotentialCompetitorRegistration(
 
                                     }
                                     Button(
+                                        enabled = constructionMode,
                                         onClick = {
                                             navController.navigate("modifier_competiteur/${competitor.id}")
                                         }, colors = ButtonColors(
