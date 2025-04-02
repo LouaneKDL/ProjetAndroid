@@ -11,6 +11,7 @@ import com.example.parkour.model.Courses
 import com.example.parkour.model.ObstacleCourse
 import com.example.parkour.model.ObstaclePost
 import com.example.parkour.model.Obstacles
+import com.example.parkour.model.ObstaclesCourses
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ class CoursesViewModel : ViewModel() {
             val response = parkourApi.getObstaclesByCourseId(id)
             if(response.isSuccessful){
                 _obstacles.postValue(response.body())
-                Log.i("Reponse :",response.body().toString())
+                Log.i("Obstacles :",response.body().toString())
             }
             else{
                 Log.i("Error :", response.message())
