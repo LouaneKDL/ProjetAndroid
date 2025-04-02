@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
         val coursesViewModel = ViewModelProvider(this)[CoursesViewModel::class.java]
         val competitorsViewModel = ViewModelProvider(this)[CompetitorsViewModel::class.java]
         val performancesViewModel = ViewModelProvider(this)[PerformancesViewModel::class.java]
+        val performancesViewModel2 = ViewModelProvider(this)[PerformancesViewModel::class.java]
         val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
         val performanceObstaclesViewModel = ViewModelProvider(this)[PerformanceObstaclesViewModel::class.java]
         //val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
@@ -116,6 +117,7 @@ class MainActivity : ComponentActivity() {
                                 competitorsViewModel,
                                 coursesViewModel,
                                 performancesViewModel,
+                                performancesViewModel2,
                                 performanceObstaclesViewModel,
                                 navController,
                                 idCompetitor,

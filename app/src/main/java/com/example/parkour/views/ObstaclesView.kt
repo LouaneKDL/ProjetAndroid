@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.parkour.model.Performance_obstacles
+import com.example.parkour.model.Performance_obstaclesPost
 import com.example.parkour.model.Performance_obstaclesRequest
 import com.example.parkour.model.PerformancesRequest
 import com.example.parkour.viewModel.CompetitorsViewModel
@@ -34,6 +35,7 @@ import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
+import java.time.Instant
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -44,7 +46,8 @@ fun Obstacles(
     modifier: Modifier = Modifier,
     competitorViewModel: CompetitorsViewModel,
     coursesViewModel: CoursesViewModel,
-    performanceViewModel: PerformancesViewModel,
+    performanceViewModel1: PerformancesViewModel,
+    performanceViewModel2: PerformancesViewModel,
     performanceObstaclesViewModel: PerformanceObstaclesViewModel,
     navController: NavController,
     idCompetitor: Int?,
@@ -75,16 +78,49 @@ fun Obstacles(
         }
     }
 
-    val performance by performanceViewModel.performance.observeAsState()
+    val performance by performanceViewModel1.performance.observeAsState()
+    val performances by performanceViewModel2.performances.observeAsState(emptyList())
 
     LaunchedEffect(idPerformances) {
         if (idPerformances != null) {
-            performanceViewModel.getPerformanceById(idPerformances)
+            performanceViewModel1.getPerformanceById(idPerformances)
         }
-    }
+        if (idPerformances == null) { //si il n'y a pas de performance il faut en créer une
+            val emptyPerformance: PerformancesRequest = PerformancesRequest(
+                competitor_id = idCompetitor ?: -1,
+                course_id = idCourse ?: -1,
+                status = "to_finish",
+                total_time = 0,
+            )
+            //on l'envoie
+            performanceViewModel1.postPerformances(emptyPerformance)
+            delay(500)
+            //on veut récupérer son id, on utilise la date de creation pour avoir la derniere créer
+            performanceViewModel2.getData()
 
+            var idPerf = -1
+
+            val mostRecentPerformance = performances.maxByOrNull {
+                Instant.parse(it.created_at)
+            }?.let {
+                idPerf = it.id
+            }
+            if (idPerf != -1) {
+                performanceViewModel1.getPerformanceById(idPerf)
+                Log.i("AWAAAAAAAAAAA","OKKKKKKKKKKKKKKKKKKKKK ${idPerf}")
+
+            }
+            else{
+                Log.i("AWAAAAAAAAAAA","NAAAAAAAAAAAAAAAAAAANN")
+            }
+
+        }
+
+    }
+    Log.i("ICI", "PERFORMANCE EST INITIALISE A : $performance")
     var time by remember { mutableLongStateOf(0L) }
     var isTimerRunning by remember { mutableStateOf(false) }
+    var timerByObstacle by remember { mutableLongStateOf(0L) }
 
     LaunchedEffect(performance) {
         if (performance != null) {
@@ -93,12 +129,14 @@ fun Obstacles(
     }
 
     var isDataLoaded by remember { mutableStateOf(false) }
-    val detailsPerformances by performanceViewModel.details.observeAsState(emptyList())
-    LaunchedEffect(idPerformances) {
-        if (idPerformances != null) {
-            performanceViewModel.getPerformanceDetailsById(idPerformances)
+    val detailsPerformances by performanceViewModel1.details.observeAsState(emptyList())
+    LaunchedEffect(performance) {
+
+        if (performance?.id != null) {
+            performanceViewModel1.getPerformanceDetailsById(performance!!.id)
         }
         isDataLoaded = true
+        Log.i("ICI", "CETTE FOIS CEST DETAILSPERFORMANCES INITIALISE A : $detailsPerformances")
     }
 
     LaunchedEffect(isTimerRunning) {
@@ -106,6 +144,7 @@ fun Obstacles(
             val startTime = System.currentTimeMillis()
             delay(10)
             val elapsedTime = System.currentTimeMillis() - startTime
+            timerByObstacle += elapsedTime
             time += elapsedTime
         }
     }
@@ -128,17 +167,6 @@ fun Obstacles(
             onClick = {
                 isTimerRunning = !isTimerRunning
 
-                if (performance == null) {
-                    val emptyPerformance: PerformancesRequest = PerformancesRequest(
-                        competitor_id = idCompetitor ?: -1,
-                        course_id = idCourse ?: -1,
-                        status = "to_finish",
-                        total_time = 0,
-                    )
-                    performanceViewModel.postPerformances(emptyPerformance)
-                    //performanceViewModel.getPerformanceById()
-                }
-
                 if (!isTimerRunning) {
 
                     val updatedPerformances: PerformancesRequest? = performance?.let {
@@ -152,11 +180,11 @@ fun Obstacles(
 
                     if (updatedPerformances != null) {
                         performance?.let {
-                            performanceViewModel.updatePerformance(
+                            performanceViewModel1.updatePerformance(
                                 id = it.id,
                                 updatedPerformances = updatedPerformances
                             )
-                            performanceViewModel.getPerformanceById(it.id)
+                            //performanceViewModel1.getPerformanceById(it.id)
                         }
                     }
                 }
@@ -191,29 +219,42 @@ fun Obstacles(
             items(obstacles.size) { index ->
                 val obstacle = obstacles[index]
 
-
-
                 var detail by remember { mutableStateOf<Performance_obstacles?>(null) }
 
                 var isObstacleDataReady by remember { mutableStateOf(false) }
 
-                LaunchedEffect(performance, detailsPerformances, obstacle, isDataLoaded) {
-                    if (performance != null && detailsPerformances.isNotEmpty()) {
+                LaunchedEffect(performance, detailsPerformances, obstacle) {
+                    Log.i("OBSTACLE_DEBUG", "Vérification des détails pour obstacle ${obstacle.obstacle_name}")
+                    if (performance != null) {
+                        // Chercher si un détail existe déjà pour cet obstacle
+                        detail = detailsPerformances.find { it.obstacle_id == obstacle.obstacle_id }
 
-                        for (detailsPerf in detailsPerformances){
+                        // Si pas de détail pour cet obstacle, en créer un
+                        if (detail == null) {
+                            Log.i("OBSTACLE_DEBUG", "Création détail pour obstacle ${obstacle.obstacle_name}")
+                            val detailPerfObs: Performance_obstaclesPost = Performance_obstaclesPost(
+                                has_fell = 0,
+                                to_verify = 0,
+                                time = 0,
+                                obstacle_id = obstacle.obstacle_id,
+                                performance_id = performance!!.id
+                            )
+                            performanceObstaclesViewModel.postPerformanceObstacles(detailPerfObs)
 
-                            if (detailsPerf.obstacle_id == obstacle.obstacle_id){
-                                detail = detailsPerf
-                                isObstacleDataReady = true
-                            }
+                            // Attendre un peu puis récupérer les détails mis à jour
+                            delay(500)
+                            performanceViewModel1.getPerformanceDetailsById(performance!!.id)
+
+                            // Essayer de trouver le détail après la mise à jour
+                            detail = detailsPerformances.find { it.obstacle_id == obstacle.obstacle_id }
                         }
 
+                        isObstacleDataReady = detail != null
                     }
                 }
-
-                ///////////////////////////
-
-                if (detail != null && isObstacleDataReady) {
+//isObstacleDataReady
+                Log.i("ICII", "ALORS LA CEST LE DETAIL ENCORE $detail")
+                if (detail != null) {
                     var hasFellChecked by remember(detail?.id) {
                         mutableStateOf(detail?.has_fell == 1)
                     }
@@ -243,32 +284,41 @@ fun Obstacles(
                             Text(String.format("Temps sur l'obstacle - %02d:%02d.%01d", minuteObs, secondObs, millisObs), fontSize = 16.sp)
 
                             if (detail!!.time == 0){
+                                var enable by remember { mutableStateOf(true) }
                                 Button(
+                                    enabled = enable,
                                     onClick = {
-                                        val updatedPerformance_obstacles: Performance_obstaclesRequest? = detail?.let {
-                                            Performance_obstaclesRequest(
-                                                to_verify = detail!!.to_verify,
-                                                time = (detail!!.time/10).toInt(),
-                                                has_fell = detail!!.has_fell,
-                                            )
+                                        if(isTimerRunning) {
+                                            val updatedPerformance_obstacles: Performance_obstaclesRequest? =
+                                                detail?.let {
+                                                    Performance_obstaclesRequest(
+                                                        to_verify = detail!!.to_verify,
+                                                        time = (timerByObstacle / 10).toInt(),
+                                                        has_fell = detail!!.has_fell,
+                                                    )
+                                                }
+
+                                            if (updatedPerformance_obstacles != null) {
+                                                detail?.let {
+                                                    performanceObstaclesViewModel.updatePerformanceObstacles(
+                                                        id = it.id,
+                                                        updatedPerformances = updatedPerformance_obstacles
+                                                    )
+                                                }
+
+                                            }
+                                            timerByObstacle = 0;
+                                            enable=false
                                         }
 
-                                        if (updatedPerformance_obstacles != null) {
-                                            detail?.let {
-                                                performanceObstaclesViewModel.updatePerformanceObstacles(
-                                                    id = it.id,
-                                                    updatedPerformances = updatedPerformance_obstacles
-                                                )
-                                            }
-                                        }
                                     },
                                     colors = ButtonDefaults.buttonColors(Color(0xFF6200EE)),
                                     modifier = Modifier.padding(16.dp)
                                 ) {
                                     Text("Valider l'obstacle", color = Color.White)
                                 }
-                            }
 
+                            }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(
                                     checked = hasFellChecked,
@@ -285,6 +335,8 @@ fun Obstacles(
                                             detail!!.id,
                                             updatedPerformanceObstacles
                                         )
+
+
                                     }, enabled = detail!!.time == 0
                                 )
                                 Text("Chute", fontSize = 16.sp)

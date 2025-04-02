@@ -9,6 +9,7 @@ import com.example.parkour.api.RetrofitInstance
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
 import com.example.parkour.model.PerformancesRequest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PerformancesViewModel : ViewModel(){
@@ -56,6 +57,7 @@ class PerformancesViewModel : ViewModel(){
             if(response.isSuccessful){
                 _details.postValue(response.body())
                 Log.i("Reponse :",response.body().toString())
+                getData()
             }
             else{
                 Log.i("Error :", response.message())
@@ -73,6 +75,8 @@ class PerformancesViewModel : ViewModel(){
                 _postPerformances.postValue(response.body())
                 //Log.i("Success", "Parcours AJOUT2 : ${response.body()}")
                 Log.i("Reponse :",response.body().toString())
+                delay(500)
+                getData()
             }
             else{
                 Log.i("Error :", response.message())
@@ -87,6 +91,8 @@ class PerformancesViewModel : ViewModel(){
                 val response = parkourApi.putPerformances(id, updatedPerformances)
                 if (response.isSuccessful) {
                     Log.i("Success", "Performances mises à jour : ${response.body()}")
+                    delay(500)
+                    getData()
                 } else {
                     Log.e("Error", "Erreur lors de la mise à jour : ${response.errorBody()?.string()}")
                 }
@@ -111,9 +117,6 @@ class PerformancesViewModel : ViewModel(){
             }
         }
     }
-
-
-
 
 
 }
