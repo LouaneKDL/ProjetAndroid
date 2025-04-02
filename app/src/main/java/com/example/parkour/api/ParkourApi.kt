@@ -1,5 +1,6 @@
 package com.example.parkour.api
 
+import com.example.parkour.model.CompetionUpdate
 import com.example.parkour.model.Competition
 import com.example.parkour.model.CompetitionRequest
 import com.example.parkour.model.CompetitorRequest
@@ -10,7 +11,6 @@ import com.example.parkour.model.ObstacleCourse
 import com.example.parkour.model.ObstacleNoDate
 import com.example.parkour.model.ObstaclePost
 import com.example.parkour.model.Obstacles
-import com.example.parkour.model.ObstaclesCourses
 import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performance_obstaclesRequest
 import com.example.parkour.model.Performances
@@ -55,7 +55,7 @@ interface ParkourApi {
 
 
     @PUT("/api/competitions/{id}")
-    suspend fun putCompetition(@Path("id")id: Int,@Body competition: Competition): Response<Competition>
+    suspend fun putCompetition(@Path("id")id: Int?,@Body competition: CompetionUpdate): Response<Competition>
 
     @DELETE("/api/competitions/{id}")
     suspend fun deleteCompetitionById(@Path("id")id: Int): Response<Unit>
@@ -69,7 +69,7 @@ interface ParkourApi {
     suspend fun getCompetitors(): Response<List<Competitors>>
 
     @GET("/api/competitors/{id}")
-    suspend fun getCompetitor(@Path("id") id:Int): Response<Competitors>
+    suspend fun getCompetitor(@Path("id") id: Int?): Response<Competitors>
 
     @GET("/api/competitors/{id}/performances")
     suspend fun getPerformanceForACompetitor(@Path("id")id:Int): Response<Performances>
@@ -84,7 +84,7 @@ interface ParkourApi {
     suspend fun postCompetitors(@Body competitorRequest: CompetitorRequest): Response<CompetitorRequest>
 
     @PUT("/api/competitors/{id}")
-    suspend fun putCompetitors(@Path("id")id: Int,@Body competitors: Competitors): Response<Competitors>
+    suspend fun putCompetitors(@Path("id") id: Int?, @Body competitors: CompetitorRequest): Response<Competitors>
 
     @DELETE("/api/competitors/{id}")
     suspend fun deleteCompetitor(@Path("id")id:Int): Response<Unit>

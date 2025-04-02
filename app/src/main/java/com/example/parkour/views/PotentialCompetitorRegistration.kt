@@ -106,6 +106,21 @@ fun PotentialCompetitorRegistration(
         )
         Button(
             onClick = {
+                navController.navigate("competition_registration_view")
+
+            }, colors = ButtonColors(
+                Color.Black,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            )
+        ) {
+            Text(
+                text = "Ajouter un concurrent"
+            )
+        }
+        Button(
+            onClick = {
                 navController.navigate("parkour_view/${competitionID}")
 
             }, colors = ButtonColors(
@@ -209,6 +224,22 @@ fun PotentialCompetitorRegistration(
                                                 text = "Inscrire",
                                             )
                                         }
+
+
+                                    }
+                                    Button(
+                                        onClick = {
+                                            navController.navigate("modifier_competiteur/${competitor.id}")
+                                        }, colors = ButtonColors(
+                                            Color.Black,
+                                            contentColor = Color.White,
+                                            disabledContainerColor = Color.Gray,
+                                            disabledContentColor = Color.White
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "Modifier Competiteur",
+                                        )
                                     }
                                 }
                             }

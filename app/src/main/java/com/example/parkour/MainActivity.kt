@@ -8,15 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.parkour.model.Obstacles
 import com.example.parkour.ui.theme.ParkourTheme
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CoursesViewModel
@@ -24,13 +21,14 @@ import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.ObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import com.example.parkour.viewModel.PerformanceObstaclesViewModel
-import com.example.parkour.viewModel.ResetViewModel
 import com.example.parkour.views.AddCompetition
 import com.example.parkour.views.AddObstacle
 import com.example.parkour.views.AddObstacleAvailableView
 import com.example.parkour.views.Competition
 import com.example.parkour.views.CompetitorRegistration
+import com.example.parkour.views.CompetitorUpdate
 import com.example.parkour.views.Competitors
+import com.example.parkour.views.ModifierCompetition
 import com.example.parkour.views.Parkour
 import com.example.parkour.views.ParkourRegistration
 import com.example.parkour.views.PotentialCompetitorRegistration
@@ -69,6 +67,30 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
+
+                        composable("modifier_competition/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
+                            ModifierCompetition(
+                                Modifier.padding(innerPadding),
+                                competitionViewModel,
+                                navController,
+                                id
+                            )
+                        }
+
+                        composable("modifier_competiteur/{id}"){
+                                backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toInt()
+                            CompetitorUpdate(
+                                modifier = Modifier.padding(innerPadding),
+                                competitorsViewModel,
+                                competitionViewModel,
+                                navController,
+                                id
+                            )
+                        }
+
                         composable(Routes.competitionView){
                             Competition(
                                 modifier = Modifier.padding(innerPadding),

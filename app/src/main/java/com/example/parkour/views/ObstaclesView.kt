@@ -16,9 +16,6 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,8 +31,6 @@ import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformanceObstaclesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 import kotlinx.coroutines.delay
-import java.util.Timer
-import kotlin.concurrent.schedule
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ResourceType", "DefaultLocale")

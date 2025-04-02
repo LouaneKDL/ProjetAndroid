@@ -36,7 +36,7 @@ class CompetitorsViewModel : ViewModel() {
     private val _competitor = MutableLiveData<Competitors>()
     val competitor: LiveData<Competitors> = _competitor
 
-    fun getCompetitorById(id:Int){
+    fun getCompetitorById(id: Int?){
         viewModelScope.launch{
             val response = parkourApi.getCompetitor(id)
             if(response.isSuccessful){
@@ -101,19 +101,25 @@ class CompetitorsViewModel : ViewModel() {
     val competitorsPost: LiveData<CompetitorRequest> = _competitorsPost
 
     fun postCompetitor(competitorRequest: CompetitorRequest){
-        viewModelScope.launch{
-            val response = parkourApi.postCompetitors(competitorRequest)
-            if(response.isSuccessful){
-                _competitorsPost.postValue(response.body())
-                Log.i("Reponse :",response.body().toString())
-            }
-            else{
-                Log.i("Error :", response.message())
+        viewModelScope.launch {
+            try {
+                Log.i("Payload :", competitorRequest.toString())
+                val response = parkourApi.postCompetitors(competitorRequest)
+                if(response.isSuccessful){
+                    _competitorsPost.postValue(response.body())
+                    Log.i("Reponse :", response.body().toString())
+                    getData()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.i("Error :", "Code: ${response.code()}, Message: ${response.message()}, Error Body: $errorBody")
+                }
+            } catch (e: Exception) {
+                Log.e("Error :", "Exception: ${e.message}")
             }
         }
     }
 
-    fun updateCompetitor(id: Int, updatedCompetitor: Competitors) {
+    fun updateCompetitor(id: Int?, updatedCompetitor: CompetitorRequest) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.putCompetitors(id, updatedCompetitor)

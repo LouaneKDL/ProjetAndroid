@@ -72,6 +72,25 @@ fun Parkour(
 
         Button(
             modifier = Modifier.padding(10.dp),
+            onClick = {navController.navigate("modifier_competition/${idCompetition}")},
+            colors = ButtonColors(
+                Color.Black,
+                contentColor = Color.White,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            ),
+            enabled = true
+        ){
+            Text(
+                text = "Modifier la compétition",
+                modifier = Modifier,
+                color = Color.White
+            )
+        }
+
+
+        Button(
+            modifier = Modifier.padding(10.dp),
             onClick = {navController.navigate("parkour_registration_view/${idCompetition}")},
             colors = ButtonColors(
                 Color.Black,

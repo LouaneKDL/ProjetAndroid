@@ -1,5 +1,6 @@
 package com.example.parkour.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,20 +14,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.parkour.api.ParkourApi
 import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: CompetitorsViewModel, competitionViewModel: CompetitionViewModel, navController: NavController) {
+fun CompetitorUpdate(modifier: Modifier = Modifier, viewModelCompetitor: CompetitorsViewModel, competitionViewModel: CompetitionViewModel, navController: NavController, idCompetitor: Int?) {
+
+
+    val competitor by viewModelCompetitor.competitor.observeAsState()
+
+    viewModelCompetitor.getCompetitorById(idCompetitor)
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf("H") }
+    var gender by remember { mutableStateOf("") }
     var bornAt by remember { mutableStateOf("") }
 
     var firstNameError by remember { mutableStateOf(false) }
@@ -35,9 +40,16 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
     var phoneError by remember { mutableStateOf(false) }
     var bornAtError by remember { mutableStateOf(false) }
 
-    val competitorResponse by competitionViewModel.competitorPost.observeAsState()
-
-
+    LaunchedEffect(competitor) {
+        competitor?.let {
+            firstName = it.first_name
+            lastName = it.last_name
+            email = it.email
+            phone = it.phone
+            gender = it.gender
+            bornAt = it.born_at
+        }
+    }
 
     Column(
         modifier = modifier
@@ -47,7 +59,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Ajouter un compétiteur",
+            text = "Modifier un compétiteur",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
@@ -59,7 +71,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             onValueChange = { firstName = it; firstNameError = it.isBlank() },
             label = { Text("Prénom") },
             isError = firstNameError,
-            placeholder = { Text("Entrez votre prénom", color = Color.Gray) },
+            placeholder = { Text(competitor?.first_name ?: "", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -77,7 +89,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             onValueChange = { lastName = it; lastNameError = it.isBlank() },
             label = { Text("Nom") },
             isError = lastNameError,
-            placeholder = { Text("Entrez votre nom", color = Color.Gray) },
+            placeholder = { Text(competitor?.last_name ?: "", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -98,7 +110,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             },
             label = { Text("Email") },
             isError = emailError,
-            placeholder = { Text("Entrez votre email", color = Color.Gray) },
+            placeholder = { Text(competitor?.email ?: "", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -119,7 +131,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             },
             label = { Text("Téléphone") },
             isError = phoneError,
-            placeholder = { Text("Entrez votre téléphone", color = Color.Gray) },
+            placeholder = { Text(competitor?.phone ?: "", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -140,7 +152,7 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
             },
             label = { Text("Date de naissance") },
             isError = bornAtError,
-            placeholder = { Text("Entrez la date de naissance (YYYY-MM-DD)", color = Color.Gray) },
+            placeholder = { Text(competitor?.born_at ?: "", color = Color.Gray) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -185,7 +197,9 @@ fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: C
 
                 if (!firstNameError && !lastNameError && !emailError && !phoneError && !bornAtError) {
                     val competitor = CompetitorRequest(firstName, lastName, email, phone, gender, bornAt)
-                    viewModelCompetitor.postCompetitor(competitor)
+                    viewModelCompetitor.updateCompetitor(idCompetitor,competitor)
+
+                    //à fix   competitionViewModel.postCompetitorToCompetitionById(0, competitor)
                     navController.popBackStack()
                 }
             },

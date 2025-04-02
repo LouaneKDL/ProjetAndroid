@@ -8,9 +8,9 @@ import com.example.parkour.api.RetrofitInstance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.parkour.api.ParkourApi
+import com.example.parkour.model.CompetionUpdate
 import com.example.parkour.model.Competition
 import com.example.parkour.model.CompetitionRequest
-import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
 import kotlinx.coroutines.launch
@@ -118,7 +118,7 @@ class CompetitionViewModel : ViewModel(){
         }
     }
 
-    fun updateCompetition(id: Int, updatedCompetition: Competition) {
+    fun updateCompetition(id: Int?, updatedCompetition: CompetionUpdate) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.putCompetition(id, updatedCompetition)
