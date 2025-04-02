@@ -202,7 +202,7 @@ fun AddCompetition(
                                 age_min = ageMin,
                                 age_max = ageMax,
                                 gender = if (sexe == "Homme") "H" else "F",
-                                has_retry = hasRetry,
+                                has_retry = if(hasRetry) 1 else 0,
                             )
                             // Log.e("LAla", "retry : " + hasRetry);
                             competitionViewModel?.postCompetition(competition)
