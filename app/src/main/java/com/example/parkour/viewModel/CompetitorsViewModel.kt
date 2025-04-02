@@ -13,6 +13,9 @@ import com.example.parkour.model.Performance_obstacles
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing competitor date
+ */
 class CompetitorsViewModel : ViewModel() {
 
     private val parkourApi = RetrofitInstance.parkourApi
@@ -20,6 +23,9 @@ class CompetitorsViewModel : ViewModel() {
     private val _competitors = MutableLiveData<List<Competitors>>()
     val competitors: LiveData<List<Competitors>> = _competitors
 
+    /**
+     * Fetches the list of competitors
+     */
     fun getData(){
         viewModelScope.launch{
             val response = parkourApi.getCompetitors()
@@ -36,6 +42,11 @@ class CompetitorsViewModel : ViewModel() {
     private val _competitor = MutableLiveData<Competitors>()
     val competitor: LiveData<Competitors> = _competitor
 
+    /**
+     * Fetches the competitor by its ID
+     *
+     * @param id the id competitor
+     */
     fun getCompetitorById(id: Int?){
         viewModelScope.launch{
             val response = parkourApi.getCompetitor(id)
@@ -52,6 +63,11 @@ class CompetitorsViewModel : ViewModel() {
     private val _performance = MutableLiveData<Performances>()
     val performance: LiveData<Performances> = _performance
 
+    /**
+     * Fetches the list of performance at a competitor
+     *
+     * @param id the id competitor
+     */
     fun getPerformanceByACompetitor(id:Int){
         viewModelScope.launch{
             val response = parkourApi.getPerformanceForACompetitor(id)
@@ -68,6 +84,11 @@ class CompetitorsViewModel : ViewModel() {
     private val _courses = MutableLiveData<List<Courses>>()
     val courses: LiveData<List<Courses>> = _courses
 
+    /**
+     * Fetches the list of courses at a competitor
+     *
+     * @param id the id competitor
+     */
     fun getCoursesByACompetitor(id:Int){
         viewModelScope.launch{
             val response = parkourApi.getCoursesByACompetitorId(id)
@@ -84,6 +105,11 @@ class CompetitorsViewModel : ViewModel() {
     private val _detailPerformances = MutableLiveData<Performance_obstacles>()
     val detailPerformances: LiveData<Performance_obstacles> = _detailPerformances
 
+    /**
+     * Fetches performance data at a competitor
+     *
+     * @param id the id competitor
+     */
     fun getPerformanceDetailsByCompetitor(id:Int){
         viewModelScope.launch{
             val response = parkourApi.getPerformanceDetailsByIdCompetitor(id)
@@ -100,6 +126,11 @@ class CompetitorsViewModel : ViewModel() {
     private val _competitorsPost = MutableLiveData<CompetitorRequest>()
     val competitorsPost: LiveData<CompetitorRequest> = _competitorsPost
 
+    /**
+     * Posts a new competitor
+     *
+     * @param competitorRequest The competitor data
+     */
     fun postCompetitor(competitorRequest: CompetitorRequest){
         viewModelScope.launch {
             try {
@@ -119,6 +150,11 @@ class CompetitorsViewModel : ViewModel() {
         }
     }
 
+    /**
+     *  Updates an existing competitor
+     *  @param id the ID of the competitor to update
+     * @param updatedCompetitor the updated competitor data
+     */
     fun updateCompetitor(id: Int?, updatedCompetitor: CompetitorRequest) {
         viewModelScope.launch {
             try {
@@ -134,6 +170,11 @@ class CompetitorsViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Deletes a competitor by its ID.
+     *
+     * @param id The ID of the competitor to delete.
+     */
     fun deleteCompetitor(id:Int){
         viewModelScope.launch {
             try {

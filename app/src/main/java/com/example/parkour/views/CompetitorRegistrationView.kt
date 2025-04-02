@@ -18,6 +18,14 @@ import com.example.parkour.model.CompetitorRequest
 import com.example.parkour.viewModel.CompetitionViewModel
 import com.example.parkour.viewModel.CompetitorsViewModel
 
+/**
+ * Composable function to register a new competitor.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModelCompetitor ViewModel for managing competitor data.
+ * @param competitionViewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompetitorRegistration(modifier: Modifier = Modifier, viewModelCompetitor: CompetitorsViewModel, competitionViewModel: CompetitionViewModel, navController: NavController) {

@@ -22,6 +22,14 @@ import com.example.parkour.R
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.ObstaclesViewModel
 
+/**
+ * Composable function to display and manage obstacles for a specific parkour course.
+ *
+ * @param viewModelObstacles ViewModel for managing obstacle data.
+ * @param viewModelCourse ViewModel for managing course data.
+ * @param idParkour The ID of the parkour course for which obstacles are displayed.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @Composable
 fun ObstaclesOfTheParkour(
     viewModelObstacles: ObstaclesViewModel,
@@ -29,14 +37,17 @@ fun ObstaclesOfTheParkour(
     idParkour: Int?,
     navController: NavHostController
 ) {
+    // Observe the list of obstacles for the parkour course
     val obstacles by viewModelCourse.obstacles.observeAsState(emptyList())
 
+    // Fetch obstacles and course details if the parkour ID is available
     if (idParkour != null) {
         LaunchedEffect(idParkour) {
             viewModelCourse.getObstaclesByCourseId(idParkour)
         }
     }
 
+    // Observe the parkour course details
     val parkour by viewModelCourse.course.observeAsState()
     if (idParkour != null) {
         LaunchedEffect(idParkour) {
@@ -65,6 +76,7 @@ fun ObstaclesOfTheParkour(
             modifier = Modifier.padding(20.dp)
         )
 
+        // Card displaying the list of obstacles
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,6 +136,7 @@ fun ObstaclesOfTheParkour(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // Button to add an available obstacle to the parkour
         Button(
             onClick = { navController.navigate("add_obstacle_available/${idParkour}") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA)),
@@ -135,6 +148,7 @@ fun ObstaclesOfTheParkour(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Button to create a new obstacle
         Button(
             onClick = { navController.navigate("add_obstacles_view") } ,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4)),

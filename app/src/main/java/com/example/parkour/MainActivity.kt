@@ -36,8 +36,14 @@ import com.example.parkour.views.PotentialCompetitorRegistration
 import com.example.parkour.views.ObstaclesView
 import com.example.parkour.views.ObstaclesOfTheParkour
 
+/**
+ * MainActivity class for the Parkour application.
+ *
+ * This activity serves as the entry point for the application and sets up the navigation
+ * between different screens using Jetpack Compose and Navigation component.
+ */
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,8 +54,8 @@ class MainActivity : ComponentActivity() {
         val performancesViewModel2 = ViewModelProvider(this)[PerformancesViewModel::class.java]
         val obstaclesViewModel = ViewModelProvider(this)[ObstaclesViewModel::class.java]
         val performanceObstaclesViewModel = ViewModelProvider(this)[PerformanceObstaclesViewModel::class.java]
-        val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
-        resetViewModel.reset()
+        //val resetViewModel = ViewModelProvider(this)[ResetViewModel::class.java]
+        //resetViewModel.reset()
 
         enableEdgeToEdge()
         setContent {

@@ -24,6 +24,19 @@ import com.example.parkour.model.*
 import com.example.parkour.viewModel.*
 import kotlinx.coroutines.delay
 
+/**
+ * Composable function to display and manage obstacles for a specific competitor's performance.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitorViewModel ViewModel for managing competitor data.
+ * @param coursesViewModel ViewModel for managing course data.
+ * @param performanceViewModel ViewModel for managing performance data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetitor The ID of the competitor.
+ * @param idCourse The ID of the course.
+ * @param idPerformances The ID of the performance.
+ */
+
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ObstaclesView(

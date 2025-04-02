@@ -15,6 +15,9 @@ import com.example.parkour.model.Competitors
 import com.example.parkour.model.Courses
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing competition data
+ */
 class CompetitionViewModel : ViewModel(){
 
     private val parkourApi = RetrofitInstance.parkourApi
@@ -22,6 +25,9 @@ class CompetitionViewModel : ViewModel(){
     private val _competitions = MutableLiveData<List<Competition>>()
     val competitions: LiveData<List<Competition>> = _competitions
 
+    /**
+     * Fetches the list of competitions
+     */
     fun getData(){
         viewModelScope.launch {
             val response = parkourApi.getCompetitions()
@@ -38,6 +44,11 @@ class CompetitionViewModel : ViewModel(){
     private val _competition = MutableLiveData<Competition>()
     val competition: LiveData<Competition> = _competition
 
+    /**
+     * Fetches the competition by its ID
+     *
+     * @param id the id competition
+     */
     fun getCompetitionById(id:Int){
         viewModelScope.launch {
             val response = parkourApi.getCompetitionById(id)
@@ -54,6 +65,11 @@ class CompetitionViewModel : ViewModel(){
     private val _competitors = MutableLiveData<List<Competitors>>()
     val competitors: LiveData<List<Competitors>> = _competitors
 
+    /**
+     * Fetches the list of competitors at a competition
+     *
+     * @param id the id competition
+     */
     fun getInscriptionsByCompetitionId(id: Int){
         viewModelScope.launch {
             val response = parkourApi.getInscriptionsByCompetitionId(id)
@@ -70,6 +86,11 @@ class CompetitionViewModel : ViewModel(){
     private val _courses = MutableLiveData<List<Courses>>()
     val courses: LiveData<List<Courses>> = _courses
 
+    /**
+     * Fetches the list of courses at a competition
+     *
+     * @param id the id competition
+     */
     fun getCoursesByCompetitionId(id:Int){
         viewModelScope.launch {
             val response = parkourApi.getCoursesByCompetitionId(id)
@@ -85,7 +106,11 @@ class CompetitionViewModel : ViewModel(){
 
     private val _competitionPost = MutableLiveData<Competition>()
     val competitionPost: LiveData<Competition> = _competitionPost
-
+    /**
+     * Posts a new competition
+     *
+     * @param competition The competition data
+     */
     fun postCompetition(competition: CompetitionRequest){
         viewModelScope.launch {
             val response = parkourApi.postCompetitions(competition)
@@ -102,6 +127,12 @@ class CompetitionViewModel : ViewModel(){
     private val _competitorPost = MutableLiveData<Competitors>()
     val competitorPost: LiveData<Competitors> = _competitorPost
 
+    /**
+     * Adds a competitor at a competition
+     *
+     * @param competitionId the ID of the competition
+     * @param competitors the competitor data to add
+     */
     fun postCompetitorToCompetitionById(competitionId: Int, competitors: ParkourApi.CompetitourRequest){
         viewModelScope.launch {
             val response = parkourApi.postCompetitorsToCompetitionById(competitionId,competitors)
@@ -118,6 +149,11 @@ class CompetitionViewModel : ViewModel(){
         }
     }
 
+    /**
+     *  Updates an existing competition
+     *  @param id the ID of the competition to update
+     * @param updatedCompetition the updated competition data
+     */
     fun updateCompetition(id: Int?, updatedCompetition: CompetionUpdate) {
         viewModelScope.launch {
             try {
@@ -132,7 +168,11 @@ class CompetitionViewModel : ViewModel(){
             }
         }
     }
-
+    /**
+     * Deletes a competition by its ID.
+     *
+     * @param id The ID of the competition to delete.
+     */
     fun deleteCompetition(id:Int){
         viewModelScope.launch {
             try {
@@ -148,6 +188,12 @@ class CompetitionViewModel : ViewModel(){
         }
     }
 
+    /**
+     * Deletes a competition from a competition.
+     *
+     * @param id The ID of the competition.
+     * @param idCompetitior The ID of the competitor to delete.
+     */
     fun deleteCompetition(id:Int, idCompetitior: Int){
         viewModelScope.launch {
             try {

@@ -40,7 +40,13 @@ import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 
-
+/**
+ * Composable function to display a list of competitions and navigate to related views.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Competition(modifier: Modifier = Modifier, viewModel: CompetitionViewModel, navController: NavController) {

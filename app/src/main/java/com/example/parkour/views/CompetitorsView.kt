@@ -38,7 +38,18 @@ import com.example.parkour.viewModel.CompetitorsViewModel
 import com.example.parkour.viewModel.CoursesViewModel
 import com.example.parkour.viewModel.PerformancesViewModel
 
-
+/**
+ * Composable function to display a list of competitors in a specific course.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitionViewModel ViewModel for managing competition data.
+ * @param competitorsViewModel ViewModel for managing competitor data.
+ * @param performancesViewModel ViewModel for managing performance data.
+ * @param coursesViewModel ViewModel for managing course data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetition The ID of the competition.
+ * @param idCourse The ID of the course.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Competitors(

@@ -15,6 +15,9 @@ import com.example.parkour.model.ObstaclesCourses
 import com.example.parkour.model.Performances
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing course data
+ */
 class CoursesViewModel : ViewModel() {
 
     private val parkourApi = RetrofitInstance.parkourApi
@@ -22,7 +25,10 @@ class CoursesViewModel : ViewModel() {
     private val _courses = MutableLiveData<List<Courses>>()
     val courses: LiveData<List<Courses>> = _courses
 
-    fun getData(){
+    /**
+     * Fetches the list of courses
+     */
+    fun getData() {
         viewModelScope.launch {
             val response = parkourApi.getCourses()
             if(response.isSuccessful){
@@ -38,7 +44,12 @@ class CoursesViewModel : ViewModel() {
     private val _obstacles = MutableLiveData<List<ObstacleCourse>>()
     val obstacles: LiveData<List<ObstacleCourse>> = _obstacles
 
-    fun getObstaclesByCourseId(id:Int){
+    /**
+     * Fetches the list of obstacles for at a course
+     *
+     * @param id The id of the course.
+     */
+    fun getObstaclesByCourseId(id: Int) {
         viewModelScope.launch {
             val response = parkourApi.getObstaclesByCourseId(id)
             if(response.isSuccessful){
@@ -54,7 +65,12 @@ class CoursesViewModel : ViewModel() {
     private val _performances = MutableLiveData<List<Performances>>()
     val performances: LiveData<List<Performances>> = _performances
 
-    fun getPerformancesByCourseId(id: Int){
+    /**
+     * Fetches the list of performances for a specific course.
+     *
+     * @param id The ID of the course.
+     */
+    fun getPerformancesByCourseId(id: Int) {
         viewModelScope.launch {
             val response = parkourApi.getPerformancesByCourseId(id)
             if(response.isSuccessful){
@@ -70,7 +86,12 @@ class CoursesViewModel : ViewModel() {
     private val _course = MutableLiveData<Courses>()
     val course: LiveData<Courses> = _course
 
-    fun getCourseById(id:Int){
+    /**
+     * Fetches a course by its ID.
+     *
+     * @param id The ID of the course to fetch.
+     */
+    fun getCourseById(id: Int) {
         viewModelScope.launch {
             val response = parkourApi.getCourseById(id)
             if(response.isSuccessful){
@@ -86,7 +107,12 @@ class CoursesViewModel : ViewModel() {
     private val _postCourse = MutableLiveData<Courses>()
     val postCourse: LiveData<Courses> = _postCourse
 
-    fun postCourse(courses: CourseRequest){
+    /**
+     * Posts a new course.
+     *
+     * @param courses The course data to post.
+     */
+    fun postCourse(courses: CourseRequest) {
         viewModelScope.launch {
             val response = parkourApi.postCourse(courses)
             if(response.isSuccessful){
@@ -102,7 +128,13 @@ class CoursesViewModel : ViewModel() {
     private val _postObstacleCourse = MutableLiveData<Obstacles>()
     val postObstaclesCourse: LiveData<Obstacles> = _postObstacleCourse
 
-    fun postObstacleToCourseById(id: Int, obstacles: Int){
+    /**
+     * Adds an obstacle to a specific course.
+     *
+     * @param id The ID of the course.
+     * @param obstacles The ID of the obstacle to add.
+     */
+    fun postObstacleToCourseById(id: Int, obstacles: Int) {
         viewModelScope.launch {
             val obstaclePost = ObstaclePost(obstacles)
             Log.i("Request Sent:", "ID: $id, Body: $obstaclePost")
@@ -122,7 +154,13 @@ class CoursesViewModel : ViewModel() {
     private val _updateObstaclePositionCourse = MutableLiveData<Obstacles>()
     val updateObstaclePositionCourse: LiveData<Obstacles> = _updateObstaclePositionCourse
 
-    fun postObstacleInCertainPositionByCourseId(id: Int, obstacles: Obstacles){
+    /**
+     * Updates the position of an obstacle within a course.
+     *
+     * @param id The ID of the course.
+     * @param obstacles The obstacle data with the new position.
+     */
+    fun postObstacleInCertainPositionByCourseId(id: Int, obstacles: Obstacles) {
         viewModelScope.launch {
             val response = parkourApi.postObstacleInCertainPositionByCourseId(id,obstacles)
             if(response.isSuccessful){
@@ -135,6 +173,12 @@ class CoursesViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Updates an existing course.
+     *
+     * @param id The ID of the course to update.
+     * @param updatedCourse The updated course data.
+     */
     fun updateCourse(id: Int, updatedCourse: Courses) {
         viewModelScope.launch {
             try {
@@ -150,7 +194,12 @@ class CoursesViewModel : ViewModel() {
         }
     }
 
-    fun deleteCourses(id:Int){
+    /**
+     * Deletes a course by its ID.
+     *
+     * @param id The ID of the course to delete.
+     */
+    fun deleteCourses(id: Int) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.deleteCourse(id)
@@ -165,7 +214,13 @@ class CoursesViewModel : ViewModel() {
         }
     }
 
-    fun deleteObstacleFromCourse(id:Int, idObstacles:Int){
+    /**
+     * Deletes an obstacle from a course.
+     *
+     * @param id The ID of the course.
+     * @param idObstacles The ID of the obstacle to delete.
+     */
+    fun deleteObstacleFromCourse(id: Int, idObstacles: Int) {
         viewModelScope.launch {
             try {
                 val response = parkourApi.deleteObstacleFromCourse(id, idObstacles)
@@ -176,7 +231,7 @@ class CoursesViewModel : ViewModel() {
                     Log.e("Error", "Erreur lors du delete : ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Log.e("Exception", "Erreur : ${e.message}")
+                Log.e("Exception", "Error: ${e.message}")
             }
         }
     }

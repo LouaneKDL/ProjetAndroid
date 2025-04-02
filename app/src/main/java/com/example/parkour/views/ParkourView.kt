@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,7 +41,14 @@ import com.example.parkour.R
 import com.example.parkour.Routes
 import com.example.parkour.viewModel.CompetitionViewModel
 
-
+/**
+ * Composable function to display a list of parkours for a specific competition.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param viewModel ViewModel for managing competition data.
+ * @param navController Navigation controller for navigating between screens.
+ * @param idCompetition The ID of the competition.
+ */
 @SuppressLint("ResourceType")
 @Composable
 fun Parkour(

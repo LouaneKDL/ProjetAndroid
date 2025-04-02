@@ -1,4 +1,3 @@
-
 package com.example.parkour.views
 
 import android.os.Build
@@ -43,14 +42,12 @@ import androidx.navigation.NavHostController
 import com.example.parkour.model.CompetitionRequest
 import com.example.parkour.viewModel.CompetitionViewModel
 
-/*
-{
-  "name": "string",
-  "age_min": 0,
-  "age_max": 0,
-  "gender": "H",
-  "has_retry": true
-}
+/**
+ * Composable function to add a new competition.
+ *
+ * @param modifier Modifier for styling and layout.
+ * @param competitionViewModel ViewModel for handling competition data.
+ * @param navController Navigation controller for navigating between screens.
  */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -61,18 +58,15 @@ fun AddCompetition(
 ) {
     val context = LocalContext.current
 
+    // State variables for competition details
     var competitionName by remember { mutableStateOf("") }
-
     var ageMin by remember { mutableStateOf(10) }
     var ageMax by remember { mutableStateOf(11) }
-
-    val ageMinAllowed = 9;
-    val ageMaxAllowed = 120;
-
+    val ageMinAllowed = 9
+    val ageMaxAllowed = 120
     var sexes = listOf("Femme", "Homme")
     var expanded by remember { mutableStateOf(false) }
     var sexe by remember { mutableStateOf(sexes.random()) }
-
     var hasRetry by remember { mutableStateOf(false) }
 
     Column(
@@ -86,8 +80,7 @@ fun AddCompetition(
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
             ),
-            modifier = Modifier,
-            // .size(width = 240.dp, height = 100.dp)
+            modifier = Modifier
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -99,6 +92,7 @@ fun AddCompetition(
                     fontWeight = FontWeight.Bold
                 )
 
+                // Input field for competition name
                 OutlinedTextField(
                     modifier = Modifier,
                     value = competitionName,
@@ -109,22 +103,20 @@ fun AddCompetition(
 
                 Spacer(modifier = Modifier.size(30.dp))
 
-
+                // Age input fields with increment and decrement buttons
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(onClick = { if (ageMin > ageMinAllowed) ageMin-- }) { Text("-") }
-
                     OutlinedTextField(
                         value = ageMin.toString(),
                         onValueChange = { newValue ->
                             newValue.toIntOrNull()?.let {
                                 if (it in ageMinAllowed..ageMaxAllowed) ageMin = it
-                            } // Sécurise l'entrée
+                            }
                         },
                         label = { Text("Âge minimum") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.width(250.dp)
                     )
-
                     Button(onClick = { if (ageMin < ageMax) ageMin++ }) { Text("+") }
                 }
 
@@ -132,26 +124,24 @@ fun AddCompetition(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(onClick = { if (ageMax > ageMin) ageMax-- }) { Text("-") }
-
                     OutlinedTextField(
                         value = ageMax.toString(),
                         onValueChange = { newValue ->
                             newValue.toIntOrNull()?.let {
                                 if (it in ageMinAllowed..ageMaxAllowed) ageMax = it
-                            } // Sécurise l'entrée
+                            }
                         },
                         label = { Text("Âge maximum") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.width(250.dp)
                     )
-
                     Button(onClick = { if (ageMax < ageMaxAllowed) ageMax++ }) { Text("+") }
                 }
 
                 Spacer(modifier = Modifier.size(30.dp))
-                Box(
 
-                ){
+                // Dropdown menu for selecting gender
+                Box {
                     Row {
                         Text(text = "Sexe : ")
                         Text(
@@ -175,6 +165,7 @@ fun AddCompetition(
                     }
                 }
 
+                // Switch for allowing a second attempt
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Autoriser un 2ème essai : ")
                     Spacer(modifier = Modifier.width(10.dp))
@@ -188,15 +179,13 @@ fun AddCompetition(
                     )
                 }
 
+                // Button to add the competition
                 Button(
                     modifier = Modifier.padding(10.dp),
                     onClick = {
-
-                        // We are gonna do the api call to add the competition with the given parameter
-                        if(competitionName.trim() == ""){
+                        if (competitionName.trim() == "") {
                             Toast.makeText(context, "Veuillez entrer un nom de compétition ! ", Toast.LENGTH_SHORT).show()
-                        }else{
-
+                        } else {
                             val competition = CompetitionRequest(
                                 name = competitionName,
                                 age_min = ageMin,
@@ -204,11 +193,9 @@ fun AddCompetition(
                                 gender = if (sexe == "Homme") "H" else "F",
                                 has_retry = if(hasRetry) 1 else 0,
                             )
-                            // Log.e("LAla", "retry : " + hasRetry);
                             competitionViewModel?.postCompetition(competition)
                             navController?.popBackStack()
                         }
-
                     },
                     colors = ButtonColors(
                         Color.Black,
@@ -222,18 +209,4 @@ fun AddCompetition(
             }
         }
     }
-
-
 }
-/*
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun myPreview() {
-    AddCompetition(
-        modifier = Modifier,
-        null,
-        null
-    )
-}
-*/
